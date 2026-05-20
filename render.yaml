@@ -1,24 +1,5 @@
 services:
   - type: web
-    name: petexpress-site-backend
-    runtime: docker
-    plan: starter
-    dockerfilePath: petexpress-site-backend/petexpress-site-backend/dockerfile
-    dockerContext: petexpress-site-backend/petexpress-site-backend
-    healthCheckPath: /produtos
-    envVars:
-      - key: APP_BASE_URL
-        value: https://petexpress-site-backend.onrender.com
-      - key: MERCADOPAGO_CHECKOUT_MODE
-        value: production
-      - key: MERCADOPAGO_ACCESS_TOKEN
-        sync: false
-      - key: MERCADOPAGO_PUBLIC_KEY
-        sync: false
-      - key: JWT_SECRET
-        generateValue: true
-
-  - type: web
     name: petexpress-site
     runtime: static
     rootDir: .
