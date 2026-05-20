@@ -1,14 +1,12 @@
 services:
   - type: web
     name: petexpress-site-backend
-    runtime: java
-    rootDir: petexpress-site-backend/petexpress-site-backend
+    runtime: docker
     plan: free
-    buildCommand: chmod +x mvnw && ./mvnw clean package -DskipTests
-    startCommand: java -jar target/petexpress-site-backend-0.0.1-SNAPSHOT.jar
+    dockerfilePath: petexpress-site-backend/petexpress-site-backend/dockerfile
+    dockerContext: petexpress-site-backend/petexpress-site-backend
+    healthCheckPath: /produtos
     envVars:
-      - key: JAVA_VERSION
-        value: 17
       - key: APP_BASE_URL
         value: https://petexpress-site-backend.onrender.com
       - key: MERCADOPAGO_CHECKOUT_MODE
@@ -26,4 +24,4 @@ services:
     rootDir: .
     plan: free
     buildCommand: mkdir -p dist && cp -r *.html *.css *.js img dist/
-    staticPublishPath: dist
+    staticPublishPath: ./dist
