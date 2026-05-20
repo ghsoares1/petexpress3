@@ -22,6 +22,5 @@ services:
     name: petexpress-site
     runtime: static
     rootDir: .
-    plan: free
     buildCommand: mkdir -p dist && cp -r *.html *.css *.js img dist/
     staticPublishPath: ./dist
