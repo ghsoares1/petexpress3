@@ -1,0 +1,10 @@
+POST http://localhost:8082/api/pagamento/criar-preferencia
+Content-Type: application/json
+
+[
+  {
+    "title": "Racao Premium",
+    "quantity": 1,
+    "price": 20.0
+  }
+]

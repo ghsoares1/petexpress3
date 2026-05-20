@@ -31,3 +31,13 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Local env file (contains secrets)
+.env
+.env.*
+
+# Local runtime logs
+*.log
+logs/
+petexpress-site-backend/petexpress-site-backend/logs/
+petexpress-site-backend/petexpress-site-backend/server.log

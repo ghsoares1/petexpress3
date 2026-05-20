@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PetExpress | Checkout</title>
-    <link rel="stylesheet" href="style-checkout.css" />
+    <link rel="stylesheet" href="style-checkout.css?v=uber-fix-1" />
+    <link rel="stylesheet" href="footer.css" />
 </head>
 <body>
     <header>
@@ -27,13 +28,17 @@
                 <div class="order-summary">
                     <h2>Resumo do pedido</h2>
                     <div class="order-list"></div>
+                    <div class="summary-fee hidden" id="deliveryFeeRow">
+                        <span>Entrega</span>
+                        <strong class="delivery-fee-value">R$ 0,00</strong>
+                    </div>
                     <div class="summary-total">
                         <span>Total do pedido</span>
                         <strong class="summary-value">R$ 0,00</strong>
                     </div>
                 </div>
 
-                <form class="checkout-form" id="checkoutForm">
+                <form class="checkout-form" id="checkoutForm" novalidate>
                     <div class="section-header">
                         <h2>Endereço de entrega</h2>
                         <span class="section-note" id="accountNotice">Você precisa ter conta para concluir.</span>
@@ -87,19 +92,7 @@
                         </div>
                     </div>
 
-                    <div class="form-block compact">
-                        <h2>Forma de entrega</h2>
-                        <label class="radio-option compact">
-                            <input type="radio" name="delivery" value="Entrega pela loja" required />
-                            <span>Entrega pela loja</span>
-                        </label>
-                        <label class="radio-option compact">
-                            <input type="radio" name="delivery" value="Retirada no local" />
-                            <span>Retirada no local</span>
-                        </label>
-                    </div>
-
-                    <div class="form-block compact">
+                    <div id="deliveryOptions" class="form-block compact">
                         <h2>Forma de entrega</h2>
                         <label class="radio-option compact">
                             <input type="radio" name="delivery" value="Receber em casa" required />
@@ -109,6 +102,41 @@
                             <input type="radio" name="delivery" value="Retirar na loja" />
                             <span>Retirar na loja</span>
                         </label>
+                        <label class="radio-option compact">
+                            <input type="radio" name="delivery" value="Entrega via Uber" />
+                            <span>Entrega via Uber</span>
+                        </label>
+
+                        <div id="uberInfo" class="uber-info hidden" aria-hidden="true">
+                            <div class="uber-card-header">
+                                <div>
+                                    <span class="uber-eyebrow">Cotação estimada</span>
+                                    <strong>Entrega parceiro Uber</strong>
+                                </div>
+                                <span class="uber-status-pill" id="uberStatusPill">Disponível</span>
+                            </div>
+
+                            <div class="uber-quote-grid">
+                                <div>
+                                    <span>Valor médio</span>
+                                    <strong id="uberFee">R$ 0,00</strong>
+                                </div>
+                                <div>
+                                    <span>Tempo estimado</span>
+                                    <strong id="uberEta">-- min</strong>
+                                </div>
+                                <div>
+                                    <span>Distância</span>
+                                    <strong id="uberDistance">-- km</strong>
+                                </div>
+                                <div>
+                                    <span>Código</span>
+                                    <strong id="uberCode">UBER-00000</strong>
+                                </div>
+                            </div>
+
+                            <p class="uber-helper">A entrega será solicitada após a confirmação do pagamento. O acompanhamento completo aparecerá em Meus Pedidos.</p>
+                        </div>
                     </div>
 
                     <div class="form-actions">
@@ -133,6 +161,62 @@
         </div>
     </div>
 
-    <script src="checkout-js.js"></script>
+        <script src="config.js"></script>
+        <script src="checkout-js.js?v=deploy-1"></script>
+  <footer class="footer-links site-footer">
+    <div class="footer-brand">
+      <a href="index.html" class="logo-link">
+        <img src="img/lg.png" alt="Logo PetExpress" class="logo footer-logo">
+      </a>
+      <p class="brand-desc">A PetExpress conecta tutores a produtos pet com compra simples, entrega organizada e atendimento pr&oacute;ximo.</p>
+      <div class="footer-contact">
+        <span><i class="fas fa-envelope"></i> atendimento@petexpress.com.br</span>
+      </div>
+    </div>
+
+    <div class="footer-col footer-institutional">
+      <h4>Institucional</h4>
+      <ul>
+        <li><a href="sobre.html">Sobre a PetExpress</a></li>
+        <li><a href="contato.html">Atendimento e suporte</a></li>
+        <li><a href="politica-entrega.html">Como funciona a entrega</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Comprar</h4>
+      <ul>
+        <li><a href="caes.html">Produtos para c&atilde;es</a></li>
+        <li><a href="gatos.html">Produtos para gatos</a></li>
+        <li><a href="passaros.html">Produtos para p&aacute;ssaros</a></li>
+        <li><a href="peixes.html">Produtos para peixes</a></li>
+        <li><a href="carrinho.html">Carrinho</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Pol&iacute;ticas</h4>
+      <ul>
+        <li><a href="politica-entrega.html">Pol&iacute;tica de Entrega</a></li>
+        <li><a href="politica-consumidor.html">Pol&iacute;tica do Consumidor</a></li>
+        <li><a href="politica-pagamento.html">Formas de Pagamento</a></li>
+        <li><a href="politica-trocas.html">Trocas e Garantias</a></li>
+        <li><a href="politica-privacidade.html">Privacidade e Seguran&ccedil;a</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Atendimento</h4>
+      <ul>
+        <li><a href="contato.html">Central de ajuda</a></li>
+        <li><a href="pedidos.html">Meus Pedidos</a></li>
+        <li><a href="minha-conta.html">Minha Conta</a></li>
+        <li><a href="checkout.html">Entrega parceiro Uber</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <div class="footer-bottom">&copy; 2026 PetExpress. Todos os direitos reservados.</div>
 </body>
 </html>
+

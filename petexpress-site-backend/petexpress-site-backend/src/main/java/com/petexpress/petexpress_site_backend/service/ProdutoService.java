@@ -24,6 +24,10 @@ public class ProdutoService {
         return produtoRepository.findAll();
     }
 
+    public List<Produto> buscarPorTipoAnimal(String tipoAnimal) {
+        return produtoRepository.findByTipoAnimalIgnoreCase(tipoAnimal);
+    }
+
     public Optional<Produto> buscarPorId(Long id) {
         return produtoRepository.findById(id);
     }

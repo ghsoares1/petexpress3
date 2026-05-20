@@ -1,6 +1,7 @@
 const cartKey = 'carrinho';
 const userKey = 'usuarioCadastrado';
 const loggedKey = 'usuarioLogado';
+const API_BASE_URL = window.PETEXPRESS_API_URL || 'http://localhost:8082';
 const orderList = document.querySelector('.order-list');
 const summaryValue = document.querySelector('.summary-value');
 const checkoutForm = document.getElementById('checkoutForm');
@@ -22,6 +23,18 @@ const botaoFinalizar =
   document.getElementById('btn-finalizar') ||
   document.querySelector('.confirm-btn') ||
   checkoutForm?.querySelector('button[type="submit"]');
+const deliveryFeeRow = document.getElementById('deliveryFeeRow');
+const deliveryFeeValue = document.querySelector('.delivery-fee-value');
+const uberInfo = document.getElementById('uberInfo');
+const uberCodeEl = document.getElementById('uberCode');
+const uberStatusPill = document.getElementById('uberStatusPill');
+const uberFeeEl = document.getElementById('uberFee');
+const uberEtaEl = document.getElementById('uberEta');
+const uberDistanceEl = document.getElementById('uberDistance');
+let currentDeliveryFee = 0;
+let currentDeliveryMethod = null;
+let currentDeliveryCode = null;
+let currentUberDelivery = null;
 
 console.log('checkout-js carregado');
 console.log('checkoutForm encontrado', checkoutForm);
@@ -40,7 +53,15 @@ async function createPaymentPreference(cart) {
     price: Number(item.preco || item.price || 0),
   }));
 
-  const response = await fetch('http://localhost:8082/api/pagamento/criar-preferencia', {
+  if (currentDeliveryMethod === 'Entrega via Uber' && currentDeliveryFee > 0) {
+    payload.push({
+      title: 'Taxa de entrega Uber',
+      quantity: 1,
+      price: Number(currentDeliveryFee),
+    });
+  }
+
+  const response = await fetch(`${API_BASE_URL}/api/pagamento/criar-preferencia`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -178,7 +199,113 @@ function renderOrderSummary() {
     orderList.appendChild(orderItem);
   });
 
-  summaryValue.textContent = formatPrice(total);
+  const totalWithDelivery = total + Number(currentDeliveryFee || 0);
+
+  if (deliveryFeeRow) {
+    deliveryFeeRow.classList.toggle('hidden', !currentDeliveryFee);
+  }
+  if (deliveryFeeValue) {
+    deliveryFeeValue.textContent = formatPrice(currentDeliveryFee);
+  }
+
+  summaryValue.textContent = formatPrice(totalWithDelivery);
+}
+
+function generateUberCode() {
+  return `UBER-${Math.floor(10000 + Math.random() * 90000)}`;
+}
+
+function getCheckoutAddressLine() {
+  const choice = checkoutForm?.addressChoice?.value;
+
+  if (choice === 'existing') {
+    const user = getSavedUser();
+    const street = getSafeValue(user || {}, 'address', 'endereco', 'endereço', 'Address');
+    const number = getSafeValue(user || {}, 'number', 'numero', 'Número', 'Number');
+    const neighborhood = getSafeValue(user || {}, 'neighborhood', 'bairro', 'Neighborhood');
+    if (street) {
+      return `${street}${number ? `, ${number}` : ''}${neighborhood ? ` - ${neighborhood}` : ''}`;
+    }
+  }
+
+  const street = checkoutForm?.address?.value?.trim();
+  const number = checkoutForm?.number?.value?.trim();
+  const neighborhood = checkoutForm?.neighborhood?.value?.trim();
+  if (street) {
+    return `${street}${number ? `, ${number}` : ''}${neighborhood ? ` - ${neighborhood}` : ''}`;
+  }
+
+  return 'Endereço do checkout';
+}
+
+function createUberDeliverySimulation() {
+  const address = getCheckoutAddressLine();
+  const distance = Number((2.2 + Math.random() * 5.6).toFixed(1));
+  const eta = Math.round(16 + distance * 4 + Math.random() * 8);
+  const fee = Number((7.9 + distance * 2.2).toFixed(2));
+
+  return {
+    id: generateUberCode(),
+    status: 'Cotação criada',
+    fee,
+    eta,
+    distance,
+    pickup: 'PetExpress - Ipiranga',
+    dropoff: address,
+    createdAt: new Date().toISOString(),
+  };
+}
+
+function renderUberSimulation() {
+  if (!currentUberDelivery) return;
+
+  currentDeliveryFee = Number(currentUberDelivery.fee || 0);
+  currentDeliveryCode = currentUberDelivery.id;
+
+  if (uberCodeEl) uberCodeEl.textContent = currentUberDelivery.id;
+  if (uberFeeEl) uberFeeEl.textContent = formatPrice(currentDeliveryFee);
+  if (uberEtaEl) uberEtaEl.textContent = `${currentUberDelivery.eta} min`;
+  if (uberDistanceEl) {
+    uberDistanceEl.textContent = `${currentUberDelivery.distance.toFixed(1).replace('.', ',')} km`;
+  }
+  if (uberStatusPill) uberStatusPill.textContent = 'Disponível';
+
+  try {
+    localStorage.setItem('uberDeliverySimulation', JSON.stringify(currentUberDelivery));
+  } catch (error) {
+    console.warn('Não foi possível salvar a cotação Uber:', error);
+  }
+
+  renderOrderSummary();
+}
+
+function resetUberSimulation() {
+  currentUberDelivery = null;
+  currentDeliveryFee = 0;
+  currentDeliveryCode = null;
+  try {
+    localStorage.removeItem('uberDeliverySimulation');
+  } catch (error) {
+    console.warn('Não foi possível limpar a cotação Uber:', error);
+  }
+}
+
+function updateDeliverySelection() {
+  const selected = document.querySelector('input[name="delivery"]:checked')?.value || null;
+  currentDeliveryMethod = selected;
+
+  if (selected === 'Entrega via Uber') {
+    currentUberDelivery = createUberDeliverySimulation();
+    uberInfo?.classList.remove('hidden');
+    uberInfo?.setAttribute('aria-hidden', 'false');
+    renderUberSimulation();
+    return;
+  }
+
+  resetUberSimulation();
+  uberInfo?.classList.add('hidden');
+  uberInfo?.setAttribute('aria-hidden', 'true');
+  renderOrderSummary();
 }
 
 function fillSavedAddress(user) {
@@ -255,7 +382,6 @@ function validateForm() {
       showMessage('Para usar o endereço cadastrado, você precisa estar logado.', false);
       return false;
     }
-    return true;
   }
 
   if (addressChoice === 'new') {
@@ -295,7 +421,25 @@ function closeModal() {
 }
 
 Array.from(checkoutForm.addressChoice).forEach((radio) => {
-  radio.addEventListener('change', updateAddressView);
+  radio.addEventListener('change', () => {
+    updateAddressView();
+    if (currentDeliveryMethod === 'Entrega via Uber') {
+      currentUberDelivery = createUberDeliverySimulation();
+      renderUberSimulation();
+    }
+  });
+});
+
+document.querySelectorAll('#deliveryOptions input[name="delivery"]').forEach((radio) => {
+  radio.addEventListener('change', updateDeliverySelection);
+});
+
+['address', 'number', 'neighborhood'].forEach((fieldName) => {
+  checkoutForm?.[fieldName]?.addEventListener('input', () => {
+    if (currentDeliveryMethod !== 'Entrega via Uber') return;
+    currentUberDelivery = createUberDeliverySimulation();
+    renderUberSimulation();
+  });
 });
 
 savedAddressBlock?.addEventListener('click', (event) => {
@@ -342,6 +486,7 @@ function updateUserState() {
 function initializePage() {
   updateUserState();
   updateAddressView();
+  updateDeliverySelection();
   renderOrderSummary();
 }
 

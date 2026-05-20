@@ -1,10 +1,11 @@
-const CART_KEY = 'carrinho';
+﻿const CART_KEY = 'carrinho';
 const cartItemsElement = document.querySelector('.cart-items');
 const totalValueElement = document.querySelector('.total-value');
 const emptyStateElement = document.querySelector('.empty-cart');
 const recommendationsElement = document.querySelector('.recommendations');
 const recommendationsSection = document.querySelector('.recommendations-section');
 const checkoutBtn = document.querySelector('.checkout-btn');
+const API_BASE_URL = window.PETEXPRESS_API_URL || 'http://localhost:8082';
 let cart = [];
 let products = [];
 
@@ -167,7 +168,7 @@ function addToCart(product) {
 
 async function fetchProducts() {
   try {
-    const response = await fetch('http://localhost:8082/produtos');
+    const response = await fetch(`${API_BASE_URL}/produtos`);
     if (!response.ok) throw new Error('Erro na API');
     products = await response.json();
     renderRecommendations();
@@ -185,3 +186,4 @@ checkoutBtn.addEventListener('click', () => {
 loadCart();
 renderCartItems();
 fetchProducts();
+

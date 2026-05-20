@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Gato com produtos pet">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#6a4bb4"/>
+      <stop offset="1" stop-color="#ffb23a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx=".22" cy=".18" r=".8">
+      <stop offset="0" stop-color="#fff" stop-opacity=".34"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="360" rx="28" fill="url(#bg)"/>
+  <rect width="640" height="360" fill="url(#glow)"/>
+  <circle cx="520" cy="74" r="86" fill="#111820" opacity=".12"/>
+  <path d="M94 304c28-57 87-93 164-93s136 36 164 93c8 17-4 37-23 37H117c-19 0-31-20-23-37Z" fill="#f0b66e"/>
+  <path d="M169 113c-32 21-52 58-52 101 0 71 62 115 141 115s141-44 141-115c0-43-20-80-52-101-55-36-123-36-178 0Z" fill="#d88942"/>
+  <path d="m145 151-35-78c-5-12 9-22 19-13l69 61Z" fill="#b86c34"/>
+  <path d="m371 151 35-78c5-12-9-22-19-13l-69 61Z" fill="#b86c34"/>
+  <ellipse cx="211" cy="207" rx="13" ry="18" fill="#111820"/>
+  <ellipse cx="305" cy="207" rx="13" ry="18" fill="#111820"/>
+  <path d="M249 232c6-6 13-6 19 0 5 6 2 15-10 15s-15-9-9-15Z" fill="#111820"/>
+  <path d="M221 260c22 16 52 16 74 0" fill="none" stroke="#77441f" stroke-width="9" stroke-linecap="round"/>
+  <path d="M150 229c-40-8-72-3-96 15M150 252c-43 6-71 20-91 42M366 229c40-8 72-3 96 15M366 252c43 6 71 20 91 42" stroke="#fff2dd" stroke-width="7" stroke-linecap="round" opacity=".78"/>
+  <rect x="442" y="148" width="92" height="132" rx="18" fill="#fff" opacity=".95"/>
+  <rect x="462" y="170" width="52" height="54" rx="12" fill="#6a4bb4"/>
+  <path d="M459 250h58" stroke="#ff8a00" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="548" cy="264" r="30" fill="#fff3e5"/>
+  <path d="M536 265c8-12 15-18 22-21 4 11 3 23-4 34-9 0-15-4-18-13Z" fill="#14a38b"/>
+</svg>

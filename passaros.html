@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PetExpress | Produtos para Pássaros</title>
+  <link rel="stylesheet" href="style-caes.css" />
+  <link rel="stylesheet" href="footer.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
+</head>
+<body class="category-passaros">
+  <header>
+    <div class="header-content">
+      <a href="index.html" class="home-button" title="Voltar para a Home"><i class="fas fa-home"></i></a>
+      <h1>Produtos para Pássaros</h1>
+    </div>
+  </header>
+
+  <main class="category-page">
+    <section class="category-hero">
+      <div>
+        <span>Produtos para pássaros</span>
+        <h2>Rações e cuidados para aves saudáveis</h2>
+        <p>Misturas, extrusadas e farinhadas para calopsitas, periquitos, papagaios e outras aves.</p>
+        <div class="hero-actions">
+          <a href="#productGrid">Ver produtos</a>
+          <a href="checkout.html">Entrega parceiro Uber</a>
+        </div>
+      </div>
+      <div class="hero-metrics"><strong id="productCount">0</strong><span>produtos encontrados</span></div>
+    </section>
+
+    <section class="category-tools" aria-label="Filtros rápidos">
+      <div class="tool-chip active"><i class="fas fa-border-all"></i> Todos os produtos</div>
+      <div class="tool-chip"><i class="fas fa-tag"></i> Calopsitas</div>
+      <div class="tool-chip"><i class="fas fa-tag"></i> Papagaios</div>
+      <div class="tool-chip"><i class="fas fa-tag"></i> Misturas</div>
+      <div class="sort-box"><span>Ordenar</span><strong>Mais relevantes</strong></div>
+    </section>
+
+    <section class="product-shell">
+      <aside class="category-sidebar">
+        <strong>Comprar por necessidade</strong>
+        <a href="#productGrid">Rações</a>
+        <a href="#productGrid">Misturas</a>
+        <a href="#productGrid">Farinhadas</a>
+        <a href="#productGrid">Calopsitas</a>
+        <a href="#productGrid">Papagaios</a>
+      </aside>
+      <section class="product-area">
+        <div class="product-section-heading">
+          <div><span>Catálogo</span><h2>Mais opções para pássaros</h2></div>
+          <p>Produtos carregados pela experiência PetExpress.</p>
+        </div>
+        <div class="product-grid" id="productGrid"></div>
+      </section>
+    </section>
+  </main>
+
+  <div id="alert" class="hidden">Produto adicionado ao carrinho</div>
+  <script>window.PETEXPRESS_CATEGORY = {"products":[{"nome":"Racao para Calopsita e Periquito PM13 Megazoo 300 g","tipoProduto":"Megazoo","tipoAnimal":"Passaros","preco":39.9,"imagem":"img/passaro-megazoo-pm13.jpg","tag":"Racao extrusada"},{"nome":"Racao Nutropica Extrusado Natural para Calopsitas 300 g","tipoProduto":"Nutropica","tipoAnimal":"Passaros","preco":45.9,"imagem":"img/passaro-nutropica.jpg","tag":"Calopsitas"},{"nome":"Mistura para Calopsita, Agapornis e Rose Faces Nutripassaros 500 g","tipoProduto":"Nutripassaros","tipoAnimal":"Passaros","preco":22.9,"imagem":"img/passaro-nutripassaros.jpg","tag":"Mistura premium"},{"nome":"Racao Extrusada para Calopsita Zootekna 350 g","tipoProduto":"Zootekna","tipoAnimal":"Passaros","preco":18.9,"imagem":"img/passaro-zootekna-extrusada.jpg","tag":"Calopsitas"},{"nome":"Farinhada Super Premium Tropical Bird Calopsita Zootekna 400 g","tipoProduto":"Zootekna","tipoAnimal":"Passaros","preco":29.9,"imagem":"img/passaro-zootekna-farinhada.jpg","tag":"Farinhada"},{"nome":"Racao Extrusada para Papagaio Regular Bits Megazoo 600 g","tipoProduto":"Megazoo","tipoAnimal":"Passaros","preco":69.9,"imagem":"img/passaro-megazoo-papagaio.jpg","tag":"Papagaios"},{"nome":"Racao Mistura com Frutas Passaro Forte 5 kg","tipoProduto":"Passaro Forte","tipoAnimal":"Passaros","preco":89.9,"imagem":"img/passaro-forte-5kg.jpg","tag":"Mistura com frutas"}],"animalLabel":"Passaros","productTag":"Aves"};</script>
+  <script src="categoria-js.js"></script>
+  <footer class="footer-links site-footer">
+    <div class="footer-brand">
+      <a href="index.html" class="logo-link">
+        <img src="img/lg.png" alt="Logo PetExpress" class="logo footer-logo">
+      </a>
+      <p class="brand-desc">A PetExpress conecta tutores a produtos pet com compra simples, entrega organizada e atendimento pr&oacute;ximo.</p>
+      <div class="footer-contact">
+        <span><i class="fas fa-envelope"></i> atendimento@petexpress.com.br</span>
+      </div>
+    </div>
+
+    <div class="footer-col footer-institutional">
+      <h4>Institucional</h4>
+      <ul>
+        <li><a href="sobre.html">Sobre a PetExpress</a></li>
+        <li><a href="contato.html">Atendimento e suporte</a></li>
+        <li><a href="politica-entrega.html">Como funciona a entrega</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Comprar</h4>
+      <ul>
+        <li><a href="caes.html">Produtos para c&atilde;es</a></li>
+        <li><a href="gatos.html">Produtos para gatos</a></li>
+        <li><a href="passaros.html">Produtos para p&aacute;ssaros</a></li>
+        <li><a href="peixes.html">Produtos para peixes</a></li>
+        <li><a href="carrinho.html">Carrinho</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Pol&iacute;ticas</h4>
+      <ul>
+        <li><a href="politica-entrega.html">Pol&iacute;tica de Entrega</a></li>
+        <li><a href="politica-consumidor.html">Pol&iacute;tica do Consumidor</a></li>
+        <li><a href="politica-pagamento.html">Formas de Pagamento</a></li>
+        <li><a href="politica-trocas.html">Trocas e Garantias</a></li>
+        <li><a href="politica-privacidade.html">Privacidade e Seguran&ccedil;a</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Atendimento</h4>
+      <ul>
+        <li><a href="contato.html">Central de ajuda</a></li>
+        <li><a href="pedidos.html">Meus Pedidos</a></li>
+        <li><a href="minha-conta.html">Minha Conta</a></li>
+        <li><a href="checkout.html">Entrega parceiro Uber</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <div class="footer-bottom">&copy; 2026 PetExpress. Todos os direitos reservados.</div>
+</body>
+</html>

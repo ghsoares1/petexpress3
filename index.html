@@ -5,11 +5,23 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>PetExpress</title>
   <link rel="stylesheet" href="style-index.css" />
+  <link rel="stylesheet" href="footer.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
 
+  <div class="top-benefits" aria-label="Benefícios PetExpress">
+    <span><i class="fas fa-truck-fast"></i> Entrega rápida na sua região</span>
+    <span><i class="fas fa-store"></i> Retirada na loja</span>
+    <span><i class="fas fa-shield-halved"></i> Compra segura</span>
+    <span><i class="fas fa-percent"></i> Ofertas para clientes cadastrados</span>
+  </div>
+
   <header>
+    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Abrir menu de categorias" aria-controls="sideMenu" aria-expanded="false">
+      <i class="fas fa-bars"></i>
+    </button>
+
     <a href="index.html" class="logo-link">
       <img src="img/lg.png" alt="Logo PetExpress" class="logo">
     </a>
@@ -28,93 +40,283 @@
 
     <div class="icones">
       <a id="accountLink" href="login.html"><i class="fas fa-user"></i><span>Conta</span></a>
-      <a href="carrinho.html"><i class="fas fa-shopping-cart"></i><span>Carrinho</span></a>
+      <a href="carrinho.html" class="cart-link"><i class="fas fa-shopping-cart"></i><span>Carrinho</span><strong id="cartCount">0</strong></a>
       <a href="pedidos.html" class="area-pedidos-link"><i class="fas fa-box-open"></i><span>Meus Pedidos</span></a>
     </div>
   </header>
 
+  <div class="side-menu-backdrop" id="sideMenuBackdrop" hidden></div>
+  <aside class="side-menu" id="sideMenu" aria-hidden="true" aria-label="Menu principal">
+    <div class="side-menu-header">
+      <div>
+        <strong>Boas-vindas à PetExpress</strong>
+        <a href="login.html" id="sideAccountLink">Entre ou cadastre-se</a>
+      </div>
+      <button type="button" id="sideMenuClose" aria-label="Fechar menu">
+        <i class="fas fa-xmark"></i>
+      </button>
+    </div>
+
+    <nav class="side-menu-nav" aria-label="Categorias e atalhos">
+      <a href="caes.html"><span><i class="fas fa-dog"></i> Cachorros</span><i class="fas fa-chevron-right"></i></a>
+      <a href="gatos.html"><span><i class="fas fa-cat"></i> Gatos</span><i class="fas fa-chevron-right"></i></a>
+      <a href="passaros.html"><span><i class="fas fa-dove"></i> Pássaros</span><i class="fas fa-chevron-right"></i></a>
+      <a href="peixes.html"><span><i class="fas fa-fish"></i> Peixes</span><i class="fas fa-chevron-right"></i></a>
+      <a href="produto.html"><span><i class="fas fa-paw"></i> Outros Pets</span><i class="fas fa-chevron-right"></i></a>
+    </nav>
+
+    <div class="side-menu-section">
+      <a href="#ofertas">Promoções</a>
+      <a href="pedidos.html">Meus Pedidos</a>
+      <a href="carrinho.html">Carrinho</a>
+      <a href="sobre.html">Sobre a PetExpress</a>
+      <a href="contato.html">Atendimento</a>
+    </div>
+
+    <div class="side-menu-services">
+      <a href="checkout.html"><i class="fas fa-bolt"></i><span>Entrega expressa</span></a>
+      <a href="pedidos.html"><i class="fas fa-rotate"></i><span>Compra programada</span></a>
+      <a href="contato.html" id="sideChatLink"><i class="fas fa-headset"></i><span>Serviços Pet</span></a>
+    </div>
+  </aside>
+
   <nav class="menu-centro">
+    <button onclick="window.location.href='todos.html'"><i class="fas fa-border-all"></i> Todos</button>
     <button onclick="window.location.href='gatos.html'"><i class="fas fa-cat"></i> Gatos</button>
     <button onclick="window.location.href='caes.html'"><i class="fas fa-dog"></i> Cães</button>
+    <button onclick="window.location.href='passaros.html'"><i class="fas fa-dove"></i> Pássaros</button>
+    <button onclick="window.location.href='peixes.html'"><i class="fas fa-fish"></i> Peixes</button>
+    <button onclick="document.getElementById('ofertas').scrollIntoView({ behavior: 'smooth' })"><i class="fas fa-tags"></i> Promoções</button>
   </nav>
 
-  <section class="destaque">
-    <h2>Mais vendidos</h2>
+  <main>
+    <section class="hero-home" aria-label="Oferta principal PetExpress">
+      <div class="hero-carousel" id="heroCarousel" aria-label="Ofertas em destaque">
+        <img src="img/imagem1.png" alt="Oferta PetExpress 1" class="hero-slide active">
+        <img src="img/imagem2.png" alt="Oferta PetExpress 2" class="hero-slide">
+        <img src="img/imagem3.png" alt="Oferta PetExpress 3" class="hero-slide">
+        <img src="img/imagem4.png" alt="Oferta PetExpress 4" class="hero-slide">
+        <img src="img/imagem5.png" alt="Oferta PetExpress 5" class="hero-slide">
+      </div>
+      <div class="hero-copy">
+        <span class="hero-kicker">Semana PetExpress</span>
+        <h1>Ofertas para deixar a rotina do seu pet mais leve</h1>
+        <p>Rações, acessórios e itens essenciais com entrega rápida e checkout seguro.</p>
+        <div class="hero-actions">
+          <a href="#ofertas" class="hero-button primary">Ver ofertas</a>
+          <a href="caes.html" class="hero-button secondary">Comprar para cães</a>
+        </div>
+      </div>
+      <div class="hero-hotspots" aria-label="Ações da oferta">
+        <a class="hero-hotspot offers" href="#ofertas" aria-label="Ver ofertas"></a>
+        <a class="hero-hotspot buy" href="todos.html" aria-label="Comprar agora"></a>
+      </div>
+      <button class="hero-control prev" type="button" aria-label="Oferta anterior" data-hero-control="prev">
+        <i class="fas fa-chevron-left"></i>
+      </button>
+      <button class="hero-control next" type="button" aria-label="Próxima oferta" data-hero-control="next">
+        <i class="fas fa-chevron-right"></i>
+      </button>
+      <div class="hero-dots" aria-label="Selecionar oferta">
+        <button class="active" type="button" aria-label="Oferta 1" data-hero-dot="0"></button>
+        <button type="button" aria-label="Oferta 2" data-hero-dot="1"></button>
+        <button type="button" aria-label="Oferta 3" data-hero-dot="2"></button>
+        <button type="button" aria-label="Oferta 4" data-hero-dot="3"></button>
+        <button type="button" aria-label="Oferta 5" data-hero-dot="4"></button>
+      </div>
+    </section>
+
+    <section class="service-strip" aria-label="Serviços PetExpress">
+      <a href="checkout.html" class="service-item">
+        <i class="fas fa-bolt"></i>
+        <strong>Entrega expressa</strong>
+        <span>Receba com parceiros locais</span>
+      </a>
+      <a href="checkout.html" class="service-item">
+        <i class="fas fa-bag-shopping"></i>
+        <strong>Retire na loja</strong>
+        <span>Reserve online e economize tempo</span>
+      </a>
+      <a href="pedidos.html" class="service-item">
+        <i class="fas fa-rotate"></i>
+        <strong>Compra programada</strong>
+        <span>Reponha ração sem esquecer</span>
+      </a>
+      <a href="contato.html" class="service-item" id="service-chat-link">
+        <i class="fas fa-headset"></i>
+        <strong>Atendimento pet</strong>
+        <span>Tire dúvidas no chat</span>
+      </a>
+    </section>
+
+    <section class="category-showcase" aria-label="Categorias principais">
+      <a href="caes.html" class="category-tile">
+        <img src="img/img1.png" alt="Cachorro com produtos pet">
+        <span>Cães</span>
+      </a>
+      <a href="gatos.html" class="category-tile">
+        <img src="img/img2.png" alt="Gato com produtos pet">
+        <span>Gatos</span>
+      </a>
+      <a href="passaros.html" class="category-tile">
+        <img src="img/img3.png" alt="Pássaro com acessórios pet">
+        <span>Pássaros</span>
+      </a>
+      <a href="peixes.html" class="category-tile">
+        <img src="img/img4.png" alt="Peixes em aquário">
+        <span>Peixes</span>
+      </a>
+    </section>
+
+    <section class="offers-band" id="ofertas">
+      <div class="section-heading">
+        <span>Super ofertas</span>
+        <h2>Achados para comprar agora</h2>
+      </div>
+      <div class="offer-grid">
+        <a href="gatos.html" class="offer-card">
+          <img src="img/c3.png" alt="Ração para gatos">
+          <strong>Rações para gatos</strong>
+          <span>Seleção com preços especiais</span>
+        </a>
+        <a href="caes.html" class="offer-card">
+          <img src="img/2.jpg" alt="Ração para cães">
+          <strong>Rações para cães</strong>
+          <span>Economia em pacotes grandes</span>
+        </a>
+        <a href="passaros.html" class="offer-card">
+          <img src="img/passaro-brinquedo.jpg" alt="Brinquedo para pássaros">
+          <strong>Acessórios e cuidados</strong>
+          <span>Itens para enriquecer a rotina</span>
+        </a>
+      </div>
+    </section>
+
+  <section class="destaque product-showcase">
+    <div class="section-heading product-heading">
+      <div>
+        <span>Mais vendidos</span>
+        <h2>Favoritos da semana</h2>
+        <p>Uma seleção enxuta com os produtos que mais valem aparecer logo na entrada.</p>
+      </div>
+    </div>
     <div class="carrossel-container">
-      <div class="carrossel" id="carrossel"></div>
+      <div class="carrossel" id="mais-vendidos-container"></div>
+    </div>
+    <div class="showcase-footer">
+      <a href="produto.html" class="section-link">Ver mais produtos</a>
     </div>
   </section>
 
-  <div class="cadastro-novidades">
-    <div class="texto-cadastro">
-      <label>Cadastre-se e receba nossas promoções e novidades antes de todo mundo.</label>
+    <section class="care-banner">
+      <img src="img/s.jpg" alt="Cachorro usando óculos em banner de atendimento">
+      <div>
+        <span>Serviços PetExpress</span>
+        <h2>Planeje entregas, acompanhe pedidos e fale com atendimento em um só lugar</h2>
+        <a href="pedidos.html">Ver meus pedidos</a>
+      </div>
+    </section>
+
+    <div class="cadastro-novidades">
+      <div class="texto-cadastro">
+        <label>Cadastre-se e receba nossas promoções e novidades antes de todo mundo.</label>
+      </div>
+      <div class="form-cadastro">
+        <input type="email" placeholder="Seu e-mail" />
+        <input type="text" placeholder="Seu nome" />
+        <button>Cadastrar</button>
+      </div>
     </div>
-    <div class="form-cadastro">
-      <input type="email" placeholder="Seu e-mail" />
-      <input type="text" placeholder="Seu nome" />
-      <button>Cadastrar</button>
+  </main>
+  <footer class="footer-links site-footer">
+    <div class="footer-brand">
+      <a href="index.html" class="logo-link">
+        <img src="img/lg.png" alt="Logo PetExpress" class="logo footer-logo">
+      </a>
+      <p class="brand-desc">A PetExpress conecta tutores a produtos pet com compra simples, entrega organizada e atendimento pr&oacute;ximo.</p>
+      <div class="footer-contact">
+        <span><i class="fas fa-envelope"></i> atendimento@petexpress.com.br</span>
+      </div>
+    </div>
+
+    <div class="footer-col footer-institutional">
+      <h4>Institucional</h4>
+      <ul>
+        <li><a href="sobre.html">Sobre a PetExpress</a></li>
+        <li><a href="contato.html">Atendimento e suporte</a></li>
+        <li><a href="politica-entrega.html">Como funciona a entrega</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Comprar</h4>
+      <ul>
+        <li><a href="caes.html">Produtos para c&atilde;es</a></li>
+        <li><a href="gatos.html">Produtos para gatos</a></li>
+        <li><a href="passaros.html">Produtos para p&aacute;ssaros</a></li>
+        <li><a href="peixes.html">Produtos para peixes</a></li>
+        <li><a href="carrinho.html">Carrinho</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Pol&iacute;ticas</h4>
+      <ul>
+        <li><a href="politica-entrega.html">Pol&iacute;tica de Entrega</a></li>
+        <li><a href="politica-consumidor.html">Pol&iacute;tica do Consumidor</a></li>
+        <li><a href="politica-pagamento.html">Formas de Pagamento</a></li>
+        <li><a href="politica-trocas.html">Trocas e Garantias</a></li>
+        <li><a href="politica-privacidade.html">Privacidade e Seguran&ccedil;a</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Atendimento</h4>
+      <ul>
+        <li><a href="contato.html">Central de ajuda</a></li>
+        <li><a href="pedidos.html">Meus Pedidos</a></li>
+        <li><a href="minha-conta.html">Minha Conta</a></li>
+        <li><a href="checkout.html">Entrega parceiro Uber</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <div class="footer-bottom">&copy; 2026 PetExpress. Todos os direitos reservados.</div>
+  
+  <!-- Chatbot: PetExpress (frontend only) -->
+  <div id="petexpress-chat" aria-live="polite">
+    <button id="pet-chat-toggle" class="pet-chat-toggle" aria-expanded="false">
+      <i class="fas fa-comment-dots"></i>
+      <span class="pet-chat-label">Ajuda</span>
+    </button>
+
+    <div id="pet-chat-box" class="pet-chat-box" aria-hidden="true">
+      <div class="pet-chat-header">
+        <div class="pet-chat-title">Atendimento PetExpress</div>
+        <button id="pet-chat-close" class="pet-chat-close" aria-label="Fechar chat">×</button>
+      </div>
+
+      <div class="pet-chat-body" id="pet-chat-body">
+        <div class="pet-chat-message bot">Olá! Como posso ajudar você hoje?</div>
+
+        <div class="pet-chat-quick">
+          <button class="pet-quick" data-key="entrega">Como funciona a entrega?</button>
+          <button class="pet-quick" data-key="retirada">Posso retirar na loja?</button>
+          <button class="pet-quick" data-key="pagamento">O pagamento é seguro?</button>
+          <button class="pet-quick" data-key="rastreio">Como acompanho meu pedido?</button>
+        <button class="pet-quick" data-key="aves">Pássaros e Peixes</button>
+        </div>
+      </div>
+
+      <div class="pet-chat-footer">
+        <input id="pet-chat-input" class="pet-chat-input" placeholder="Digite sua mensagem..." aria-label="Mensagem" />
+        <button id="pet-chat-send" class="pet-chat-send" aria-label="Enviar"><i class="fas fa-paper-plane"></i></button>
+      </div>
     </div>
   </div>
 
-  <footer class="footer-links">
-    <div>
-      <h4>Institucional</h4>
-      <ul>
-        <li>Sobre a PetExpress</li>
-        <li>Trabalhe com a gente</li>
-        <li>Canal de Ética</li>
-        <li>Área do Investidor</li>
-        <li>Portal PetExpress</li>
-        <li>Novas Unidades</li>
-        <li>Mapa do Site</li>
-      </ul>
-    </div>
-    <div>
-      <h4>Aqui Você Encontra</h4>
-      <ul>
-        <li>Assinatura PetExpress</li>
-        <li>Retirada rápida na loja</li>
-        <li>Compare e Compre</li>
-        <li>Vantagens Exclusivas</li>
-        <li>Clube PetExpress</li>
-        <li>Guia de Compras</li>
-        <li>PetCommerce</li>
-      </ul>
-    </div>
-    <div>
-      <h4>Nossas Políticas</h4>
-      <ul>
-        <li>Política de Entregas</li>
-        <li>Formas de Pagamento</li>
-        <li>Trocas e Garantias</li>
-        <li>Descontos e Promoções</li>
-        <li>Privacidade e Segurança</li>
-      </ul>
-    </div>
-    <div>
-      <h4>Ajuda</h4>
-      <ul>
-        <li>Fale Conosco</li>
-        <li>Meus Pedidos</li>
-        <li>Minha Conta</li>
-        <li>Minhas Assinaturas</li>
-        <li>Canal de Ouvidoria</li>
-      </ul>
-
-    </div>
-
-    <div class="box-app">
-      <p><strong>Baixe o Nosso App</strong></p>
-      <img src="img/qrcode.png" alt="QR code" style="width: 90px;">
-      <div style="margin-top: 10px;">
-        <img src="img/appstore.png" alt="App Store" style="width: 100px; margin-bottom: 6px;">
-        <img src="img/googleplay.png" alt="Google Play" style="width: 100px;">
-      </div>
-    </div>
-    
-  </footer>
-  
- <script src="index-js.js"></script>
+  <script src="index-js.js"></script>
 
 </body>
 </html>
+

@@ -1,4 +1,4 @@
-const CART_KEY = 'carrinho';
+﻿const CART_KEY = 'carrinho';
 
 function getCart() {
   try {
@@ -59,3 +59,44 @@ function addToCart(button) {
   saveCart(cart);
   showAlert();
 }
+
+const API_BASE_URL = window.PETEXPRESS_API_URL || 'http://localhost:8082';
+
+async function carregarProdutos(tipoAnimal) {
+  const container = document.querySelector('.product-grid');
+  if (!container) return;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/produtos/categoria/${tipoAnimal}`);
+    if (!response.ok) throw new Error('Erro ao buscar produtos');
+    
+    const produtos = await response.json();
+    
+    container.innerHTML = '';
+    
+    produtos.forEach(produto => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      card.innerHTML = `
+        <img src="${produto.imagem || 'img/c1.png'}" alt="${produto.nome}">
+        <h2>${produto.nome}</h2>
+        <p class="brand">Marca: ${produto.tipoProduto || 'Diversos'}</p>
+        <p class="age">Idade: Todas</p>
+        <p class="price">R$ ${produto.preco.toFixed(2).replace('.', ',')}</p>
+        <button onclick="addToCart(this)">Comprar</button>
+      `;
+      container.appendChild(card);
+    });
+  } catch (error) {
+    console.error('Erro ao carregar produtos dinamicos:', error);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const grid = document.querySelector('.product-grid');
+  if (grid) {
+    grid.innerHTML = '<p style="text-align:center; width:100%; padding:20px;">Carregando produtos...</p>';
+  }
+  carregarProdutos('GATO');
+});
+

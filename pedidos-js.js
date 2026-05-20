@@ -1,5 +1,5 @@
-const LOGGED_USER_KEY = 'usuarioLogado';
-const ORDERS_KEY = 'pedidos';
+﻿const LOGGED_USER_KEY = 'usuarioLogado';
+const API_BASE_URL = window.PETEXPRESS_API_URL || 'http://localhost:8082';
 
 const ordersContainer = document.getElementById('ordersContainer');
 
@@ -8,19 +8,14 @@ function getLoggedUser() {
     const raw = localStorage.getItem(LOGGED_USER_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch (error) {
-    console.error('Erro ao ler usuário logado:', error);
+    console.error('Erro ao ler usuario logado:', error);
     return null;
   }
 }
 
-function getOrders() {
-  try {
-    const raw = localStorage.getItem(ORDERS_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch (error) {
-    console.error('Erro ao ler pedidos:', error);
-    return [];
-  }
+function getAuthHeaders() {
+  const loggedUser = getLoggedUser();
+  return loggedUser?.token ? { Authorization: `Bearer ${loggedUser.token}` } : {};
 }
 
 function formatDate(dateString) {
@@ -48,7 +43,12 @@ function redirectToLogin() {
 
 function renderEmptyMessage() {
   if (!ordersContainer) return;
-  ordersContainer.innerHTML = '<div class="empty-message">Você ainda não fez nenhum pedido.</div>';
+  ordersContainer.innerHTML = '<div class="empty-message">Voce ainda nao fez nenhum pedido.</div>';
+}
+
+function renderErrorMessage(message) {
+  if (!ordersContainer) return;
+  ordersContainer.innerHTML = `<div class="empty-message">${message}</div>`;
 }
 
 function renderOrders(orders) {
@@ -87,22 +87,36 @@ function renderOrders(orders) {
   });
 }
 
-function initializePage() {
+async function fetchOrders(userId) {
+  const response = await fetch(`${API_BASE_URL}/api/pedidos/usuario/${userId}`, {
+    headers: getAuthHeaders()
+  });
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Nao foi possivel carregar pedidos: ${response.status} ${errorText}`);
+  }
+  return response.json();
+}
+
+async function initializePage() {
   const loggedUser = getLoggedUser();
-  if (!loggedUser || !loggedUser.email) {
+  if (!loggedUser || !loggedUser.id) {
     redirectToLogin();
     return;
   }
 
-  const allOrders = getOrders();
-  const userOrders = allOrders.filter((order) => order.usuarioEmail === loggedUser.email);
-
-  if (!userOrders.length) {
-    renderEmptyMessage();
-    return;
+  try {
+    const orders = await fetchOrders(loggedUser.id);
+    if (!orders.length) {
+      renderEmptyMessage();
+      return;
+    }
+    renderOrders(orders);
+  } catch (error) {
+    console.error('Erro ao carregar pedidos:', error);
+    renderErrorMessage('Nao foi possivel carregar seus pedidos agora.');
   }
-
-  renderOrders(userOrders.slice().reverse());
 }
 
 document.addEventListener('DOMContentLoaded', initializePage);
+

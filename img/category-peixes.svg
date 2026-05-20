@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Peixes em aquário">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#087f8c"/>
+      <stop offset="1" stop-color="#111820"/>
+    </linearGradient>
+    <radialGradient id="water" cx=".3" cy=".2" r=".9">
+      <stop offset="0" stop-color="#9ce8e0" stop-opacity=".4"/>
+      <stop offset="1" stop-color="#9ce8e0" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="360" rx="28" fill="url(#bg)"/>
+  <rect width="640" height="360" fill="url(#water)"/>
+  <path d="M0 104c72 26 142 26 210 0s138-26 210 0 145 26 220 0" fill="none" stroke="#fff" stroke-width="10" opacity=".17"/>
+  <path d="M0 174c72 26 142 26 210 0s138-26 210 0 145 26 220 0" fill="none" stroke="#fff" stroke-width="10" opacity=".12"/>
+  <path d="M94 276c38-54 88-86 148-96 4 52-15 99-56 140-38-7-69-22-92-44Z" fill="#14a38b"/>
+  <path d="M270 168c77-58 172-56 258 8-85 68-181 67-258-8Z" fill="#ff8a00"/>
+  <path d="M526 176l69-45c13-8 29 6 22 20l-31 58 31 58c7 14-9 28-22 20l-69-45c19-20 19-45 0-66Z" fill="#ffd16b"/>
+  <circle cx="317" cy="163" r="8" fill="#111820"/>
+  <path d="M383 124c-20 35-20 72 0 110" fill="none" stroke="#fff3e5" stroke-width="9" stroke-linecap="round" opacity=".7"/>
+  <path d="M420 126c-18 33-18 69 0 105" fill="none" stroke="#fff3e5" stroke-width="9" stroke-linecap="round" opacity=".55"/>
+  <path d="M173 90c53-34 113-32 176 7-61 45-121 44-176-7Z" fill="#6a4bb4"/>
+  <path d="M171 90l-54-33c-10-6-22 5-17 16l22 37-22 37c-5 11 7 22 17 16l54-33c-10-12-10-25 0-40Z" fill="#ffcf5f"/>
+  <circle cx="212" cy="86" r="6" fill="#111820"/>
+  <path d="M458 300c10-36 29-66 56-90 21 28 29 59 23 91-31 11-57 11-79-1Z" fill="#40c77c"/>
+  <path d="M84 318h478" stroke="#ffffff" stroke-width="16" stroke-linecap="round" opacity=".14"/>
+</svg>

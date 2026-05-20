@@ -2,81 +2,118 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PetExpress | Rações para Gatos</title>
-  <link rel="stylesheet" href="style-gatos.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style-caes.css" />
+  <link rel="stylesheet" href="footer.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;700&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="category-gatos">
   <header>
     <div class="header-content">
-      <a href="index.html" class="home-button" title="Voltar para a Home">
-        <i class="fas fa-home"></i>
-      </a>
+      <a href="index.html" class="home-button" title="Voltar para a Home"><i class="fas fa-home"></i></a>
       <h1>Rações para Gatos</h1>
     </div>
   </header>
 
-  <main class="product-grid">
-    <div class="product-card">
-      <img src="img/c1.png" alt="Whiskas Adulto Carne">
-      <h2>Whiskas Adulto Carne</h2>
-      <p class="brand">Marca: Whiskas</p>
-      <p class="age">Idade: Adulto</p>
-      <p class="price">R$ 29,90</p>
-      <button onclick="addToCart(this)">Comprar</button>
-    </div>
+  <main class="category-page">
+    <section class="category-hero">
+      <div>
+        <span>Produtos para gatos</span>
+        <h2>Alimentos e cuidados para gatos exigentes</h2>
+        <p>Encontre rações para gatos adultos, filhotes e castrados, com produtos selecionados para a rotina felina.</p>
+        <div class="hero-actions">
+          <a href="#productGrid">Ver produtos</a>
+          <a href="checkout.html">Entrega parceiro Uber</a>
+        </div>
+      </div>
+      <div class="hero-metrics"><strong id="productCount">0</strong><span>produtos encontrados</span></div>
+    </section>
 
-    <div class="product-card">
-      <img src="img/c2.jpg" alt="Golden Gatos Castrados">
-      <h2>Golden Gatos Castrados</h2>
-      <p class="brand">Marca: Royal Canin</p>
-      <p class="age">Idade: Adulto</p>
-      <p class="price">R$ 64,90</p>
-      <button onclick="addToCart(this)">Comprar</button>
-    </div>
+    <section class="category-tools" aria-label="Filtros rápidos">
+      <div class="tool-chip active"><i class="fas fa-border-all"></i> Todas as rações</div>
+      <div class="tool-chip"><i class="fas fa-tag"></i> Castrados</div>
+      <div class="tool-chip"><i class="fas fa-tag"></i> Filhotes</div>
+      <div class="tool-chip"><i class="fas fa-tag"></i> Entrega rápida</div>
+      <div class="sort-box"><span>Ordenar</span><strong>Mais relevantes</strong></div>
+    </section>
 
-    <div class="product-card">
-      <img src="img/c3.png" alt="Premier Gatos Filhotes Frango">
-      <h2>Premier Gatos Filhotes Frango</h2>
-      <p class="brand">Marca: Whiskas</p>
-      <p class="age">Idade: Filhote</p>
-      <p class="price">R$ 89,90</p>
-      <button onclick="addToCart(this)">Comprar</button>
-    </div>
-
-    <div class="product-card">
-      <img src="img/c4.jpg" alt="GranPlus Gatos Adultos Carne & Arroz">
-      <h2>GranPlus Gatos Adultos Carne & Arroz</h2>
-      <p class="brand">Marca: Royal Canin</p>
-      <p class="age">Idade: Adulto</p>
-      <p class="price">R$ 72,50</p>
-      <button onclick="addToCart(this)">Comprar</button>
-    </div>
-
-    <div class="product-card">
-      <img src="img/c5.jpg" alt="Cat Chow Naturalis Frango">
-      <h2>Cat Chow Naturalis Frango</h2>
-      <p class="brand">Marca: Whiskas</p>
-      <p class="age">Idade: Adulto</p>
-      <p class="price">R$ 55,90</p>
-      <button onclick="addToCart(this)">Comprar</button>
-    </div>
-
-    <div class="product-card">
-      <img src="img/c6.jpg" alt="Special Cat Prime Salmão">
-      <h2>Special Cat Prime Salmão</h2>
-      <p class="brand">Marca: Baw Waw</p>
-      <p class="age">Idade: Adulto</p>
-      <p class="price">R$ 59,90</p>
-      <button onclick="addToCart(this)">Comprar</button>
-    </div>
+    <section class="product-shell">
+      <aside class="category-sidebar">
+        <strong>Comprar por necessidade</strong>
+        <a href="#productGrid">Ração seca</a>
+        <a href="#productGrid">Castrados</a>
+        <a href="#productGrid">Filhotes</a>
+        <a href="#productGrid">Adultos</a>
+        <a href="#productGrid">Premium</a>
+      </aside>
+      <section class="product-area">
+        <div class="product-section-heading">
+          <div><span>Catálogo</span><h2>Mais opções para gatos</h2></div>
+          <p>Produtos carregados pela experiência PetExpress.</p>
+        </div>
+        <div class="product-grid" id="productGrid"></div>
+      </section>
+    </section>
   </main>
 
   <div id="alert" class="hidden">Produto adicionado ao carrinho</div>
+  <script>window.PETEXPRESS_CATEGORY = {"tipoAnimal":"GATO","animalLabel":"Gato","productTag":"Ração seca","products":[{"nome":"Whiskas Adulto Carne","tipoProduto":"Whiskas","tipoAnimal":"Gatos","preco":29.9,"imagem":"img/c1.png","tag":"Adultos"},{"nome":"Golden Gatos Castrados","tipoProduto":"Golden","tipoAnimal":"Gatos","preco":64.9,"imagem":"img/c2.jpg","tag":"Castrados"},{"nome":"Premier Gatos Filhotes Frango","tipoProduto":"Premier","tipoAnimal":"Gatos","preco":89.9,"imagem":"img/c3.png","tag":"Filhotes"},{"nome":"GranPlus Gatos Adultos Carne e Arroz","tipoProduto":"GranPlus","tipoAnimal":"Gatos","preco":72.5,"imagem":"img/c4.jpg","tag":"Adultos"},{"nome":"Cat Chow Naturalis Frango","tipoProduto":"Cat Chow","tipoAnimal":"Gatos","preco":55.9,"imagem":"img/c5.jpg","tag":"Natural"},{"nome":"Special Cat Prime Salmão","tipoProduto":"Special Cat","tipoAnimal":"Gatos","preco":59.9,"imagem":"img/c6.jpg","tag":"Premium"}]};</script>
+  <script src="categoria-js.js"></script>
+  <footer class="footer-links site-footer">
+    <div class="footer-brand">
+      <a href="index.html" class="logo-link">
+        <img src="img/lg.png" alt="Logo PetExpress" class="logo footer-logo">
+      </a>
+      <p class="brand-desc">A PetExpress conecta tutores a produtos pet com compra simples, entrega organizada e atendimento pr&oacute;ximo.</p>
+      <div class="footer-contact">
+        <span><i class="fas fa-envelope"></i> atendimento@petexpress.com.br</span>
+      </div>
+    </div>
 
- <script src="gatos-js.js"></script>
+    <div class="footer-col footer-institutional">
+      <h4>Institucional</h4>
+      <ul>
+        <li><a href="sobre.html">Sobre a PetExpress</a></li>
+        <li><a href="contato.html">Atendimento e suporte</a></li>
+        <li><a href="politica-entrega.html">Como funciona a entrega</a></li>
+      </ul>
+    </div>
 
+    <div class="footer-col">
+      <h4>Comprar</h4>
+      <ul>
+        <li><a href="caes.html">Produtos para c&atilde;es</a></li>
+        <li><a href="gatos.html">Produtos para gatos</a></li>
+        <li><a href="passaros.html">Produtos para p&aacute;ssaros</a></li>
+        <li><a href="peixes.html">Produtos para peixes</a></li>
+        <li><a href="carrinho.html">Carrinho</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Pol&iacute;ticas</h4>
+      <ul>
+        <li><a href="politica-entrega.html">Pol&iacute;tica de Entrega</a></li>
+        <li><a href="politica-consumidor.html">Pol&iacute;tica do Consumidor</a></li>
+        <li><a href="politica-pagamento.html">Formas de Pagamento</a></li>
+        <li><a href="politica-trocas.html">Trocas e Garantias</a></li>
+        <li><a href="politica-privacidade.html">Privacidade e Seguran&ccedil;a</a></li>
+      </ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Atendimento</h4>
+      <ul>
+        <li><a href="contato.html">Central de ajuda</a></li>
+        <li><a href="pedidos.html">Meus Pedidos</a></li>
+        <li><a href="minha-conta.html">Minha Conta</a></li>
+        <li><a href="checkout.html">Entrega parceiro Uber</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <div class="footer-bottom">&copy; 2026 PetExpress. Todos os direitos reservados.</div>
 </body>
 </html>

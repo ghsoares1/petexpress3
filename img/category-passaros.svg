@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" role="img" aria-label="Pássaro com acessórios">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#168f8f"/>
+      <stop offset="1" stop-color="#243044"/>
+    </linearGradient>
+    <radialGradient id="sun" cx=".78" cy=".22" r=".55">
+      <stop offset="0" stop-color="#ffd16b" stop-opacity=".85"/>
+      <stop offset="1" stop-color="#ffd16b" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="640" height="360" rx="28" fill="url(#bg)"/>
+  <rect width="640" height="360" fill="url(#sun)"/>
+  <path d="M64 278c109-52 221-52 336 0" fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round" opacity=".2"/>
+  <path d="M132 255h382" stroke="#ffd16b" stroke-width="15" stroke-linecap="round"/>
+  <path d="M263 245c-14-59 16-120 77-134 72-16 126 35 126 91 0 74-60 114-119 114-43 0-73-25-84-71Z" fill="#35c2c0"/>
+  <path d="M345 117c31 15 54 42 63 75-43-1-82-17-118-48 14-14 32-23 55-27Z" fill="#ff8a00"/>
+  <path d="M451 182l83-27c11-4 19 10 10 18l-67 55Z" fill="#ffd16b"/>
+  <circle cx="374" cy="171" r="9" fill="#111820"/>
+  <path d="M316 247c-30 8-63 10-99 6 28-42 64-65 109-69 13 31 10 52-10 63Z" fill="#ffffff" opacity=".9"/>
+  <path d="M329 257c-19 20-45 35-79 45" fill="none" stroke="#111820" stroke-width="10" stroke-linecap="round" opacity=".35"/>
+  <path d="M367 306c-4 18-10 33-19 45M405 306c9 16 22 29 39 39" stroke="#ffd16b" stroke-width="8" stroke-linecap="round"/>
+  <rect x="78" y="99" width="104" height="144" rx="18" fill="#fff" opacity=".94"/>
+  <path d="M99 129h62M99 155h62" stroke="#168f8f" stroke-width="12" stroke-linecap="round"/>
+  <circle cx="132" cy="201" r="28" fill="#ff8a00" opacity=".9"/>
+</svg>

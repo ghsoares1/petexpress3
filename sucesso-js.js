@@ -1,47 +1,42 @@
-const CART_KEY = 'carrinho';
-const ORDERS_KEY = 'pedidos';
+﻿const CART_KEY = 'carrinho';
 const LOGGED_KEY = 'usuarioLogado';
+const API_BASE_URL = window.PETEXPRESS_API_URL || 'http://localhost:8082';
 
 const orderNumberField = document.getElementById('orderNumber');
 const orderInfoField = document.getElementById('orderInfo');
 const alertMessageField = document.getElementById('alertMessage');
-
-function getCart() {
-  try {
-    const raw = localStorage.getItem(CART_KEY);
-    return raw ? JSON.parse(raw) : [];
-  } catch (error) {
-    console.error('Erro ao ler carrinho:', error);
-    return [];
-  }
-}
 
 function getLoggedUser() {
   try {
     const raw = localStorage.getItem(LOGGED_KEY);
     return raw ? JSON.parse(raw) : null;
   } catch (error) {
-    console.error('Erro ao ler usuário logado:', error);
+    console.error('Erro ao ler usuario logado:', error);
     return null;
   }
 }
 
-function getOrders() {
+function getPendingPedidoId() {
+  return localStorage.getItem('pendingPedidoId');
+}
+
+function getAuthHeaders() {
+  const loggedUser = getLoggedUser();
+  return loggedUser?.token ? { Authorization: `Bearer ${loggedUser.token}` } : {};
+}
+
+function getLastOrder() {
   try {
-    const raw = localStorage.getItem(ORDERS_KEY);
-    return raw ? JSON.parse(raw) : [];
+    const raw = localStorage.getItem('lastOrder');
+    return raw ? JSON.parse(raw) : null;
   } catch (error) {
-    console.error('Erro ao ler pedidos:', error);
-    return [];
+    return null;
   }
 }
 
-function saveOrders(orders) {
-  localStorage.setItem(ORDERS_KEY, JSON.stringify(orders));
-}
-
-function generateOrderNumber() {
-  return `PE${Date.now()}${Math.floor(100 + Math.random() * 900)}`;
+function clearCheckoutState() {
+  localStorage.removeItem(CART_KEY);
+  localStorage.removeItem('pendingPedidoId');
 }
 
 function formatDate(dateString) {
@@ -58,72 +53,62 @@ function formatDate(dateString) {
   });
 }
 
-function getSavedOrder() {
-  const raw = sessionStorage.getItem('ultimoPedidoSalvo');
-  return raw ? JSON.parse(raw) : null;
-}
-
-function setSavedOrder(order) {
-  sessionStorage.setItem('ultimoPedidoSalvo', JSON.stringify(order));
-}
-
-function clearCart() {
-  localStorage.removeItem(CART_KEY);
-}
-
-function createOrder() {
-  const cart = getCart();
-  const loggedUser = getLoggedUser();
-  if (!cart.length || !loggedUser) {
-    return null;
-  }
-
-  const total = cart.reduce((sum, item) => sum + Number(item.preco || item.price || 0) * Number(item.quantidade || item.quantity || 1), 0);
-  const order = {
-    numeroPedido: generateOrderNumber(),
-    usuarioEmail: loggedUser.email || '',
-    itens: cart,
-    total,
-    data: new Date().toISOString(),
-    status: 'Pagamento aprovado'
-  };
-
-  const orders = getOrders();
-  orders.push(order);
-  saveOrders(orders);
-  setSavedOrder(order);
-  return order;
-}
-
 function showMessage(message) {
   if (!alertMessageField) return;
   alertMessageField.textContent = message;
 }
 
-function initializePage() {
-  const existingOrder = getSavedOrder();
-  let order = existingOrder;
-
-  if (!order) {
-    order = createOrder();
-    clearCart();
-  }
-
-  if (!order) {
-    showMessage('Não foi possível registrar o pedido. Verifique se você está logado e se o carrinho contém itens.');
-    if (orderNumberField) {
-      orderNumberField.textContent = 'N/A';
-    }
-    return;
-  }
-
+function renderOrder(order) {
   if (orderNumberField) {
-    orderNumberField.textContent = order.numeroPedido;
+    orderNumberField.textContent = order?.numeroPedido || 'N/A';
   }
 
-  if (orderInfoField) {
+  if (orderInfoField && order?.data) {
     orderInfoField.textContent = `Pedido confirmado em ${formatDate(order.data)}.`;
   }
 }
 
+async function approvePendingOrder(pedidoId) {
+  const response = await fetch(`${API_BASE_URL}/api/pedidos/${pedidoId}/aprovar`, {
+    method: 'PUT',
+    headers: getAuthHeaders()
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Falha ao confirmar pedido: ${response.status} ${errorText}`);
+  }
+
+  return response.json();
+}
+
+async function initializePage() {
+  const loggedUser = getLoggedUser();
+  const pedidoId = getPendingPedidoId();
+
+  if (!loggedUser) {
+    showMessage('Nao foi possivel confirmar o pedido porque voce nao esta logado.');
+    renderOrder(getLastOrder());
+    return;
+  }
+
+  if (!pedidoId) {
+    showMessage('Pedido ja confirmado ou nao encontrado nesta sessao.');
+    renderOrder(getLastOrder());
+    return;
+  }
+
+  try {
+    const order = await approvePendingOrder(pedidoId);
+    clearCheckoutState();
+    renderOrder(order);
+    showMessage('Pedido confirmado com sucesso.');
+  } catch (error) {
+    console.error('Erro ao confirmar pedido:', error);
+    showMessage('Pagamento recebido, mas nao foi possivel atualizar o pedido automaticamente. Acesse Meus Pedidos ou tente fazer login novamente.');
+    renderOrder(getLastOrder());
+  }
+}
+
 document.addEventListener('DOMContentLoaded', initializePage);
+

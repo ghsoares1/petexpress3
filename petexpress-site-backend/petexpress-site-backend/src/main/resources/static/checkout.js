@@ -1,5 +1,15 @@
-document.addEventListener("DOMContentLoaded", () => {
+﻿document.addEventListener("DOMContentLoaded", () => {
     const button = document.getElementById("finalizar-compra");
+    const apiBaseUrl = window.PETEXPRESS_API_URL || "http://localhost:8082";
+
+    function getAuthHeaders() {
+        try {
+            const loggedUser = JSON.parse(localStorage.getItem("usuarioLogado") || "null");
+            return loggedUser?.token ? { Authorization: `Bearer ${loggedUser.token}` } : {};
+        } catch (error) {
+            return {};
+        }
+    }
     if (!button) {
         return;
     }
@@ -13,13 +23,23 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
+        const paymentItems = cart.map(item => ({
+            title: item.nome || item.name || 'Produto',
+            quantity: Number(item.quantidade || item.quantity || 1),
+            price: Number(item.preco || item.price || 0)
+        }));
+
         try {
-            const response = await fetch("http://localhost:8082/api/pagamento/criar-preferencia", {
+            const response = await fetch(`${apiBaseUrl}/api/pagamento/criar-preferencia`, {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json",
+                    ...getAuthHeaders()
                 },
-                body: JSON.stringify(cart)
+                body: JSON.stringify({
+                    frontendBaseUrl: window.location.origin,
+                    itens: paymentItems
+                })
             });
 
             if (!response.ok) {
@@ -39,3 +59,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
