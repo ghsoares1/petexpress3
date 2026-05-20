@@ -2,7 +2,7 @@ services:
   - type: web
     name: petexpress-site-backend
     runtime: docker
-    plan: free
+    plan: starter
     dockerfilePath: petexpress-site-backend/petexpress-site-backend/dockerfile
     dockerContext: petexpress-site-backend/petexpress-site-backend
     healthCheckPath: /produtos
