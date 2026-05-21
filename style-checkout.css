@@ -639,6 +639,78 @@ main.checkout-page {
 }
 
 @media (max-width: 640px) {
+    header {
+        padding: 12px 0;
+    }
+
+    main.checkout-page {
+        padding: 14px 10px 24px;
+    }
+
+    .checkout-card,
+    .order-summary,
+    .checkout-form {
+        border-radius: 16px;
+        padding: 14px;
+    }
+
+    .checkout-header,
+    .section-header,
+    .saved-address-header,
+    .uber-card-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .checkout-header h1 {
+        font-size: 1.45rem;
+    }
+
+    .order-badge,
+    .uber-status-pill {
+        align-self: flex-start;
+    }
+
+    .order-item,
+    .summary-total,
+    .summary-fee {
+        grid-template-columns: 1fr;
+        align-items: flex-start;
+    }
+
+    .order-item {
+        display: grid;
+    }
+
+    .summary-total,
+    .summary-fee {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .uber-quote-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .saved-address-small {
+        grid-template-columns: 1fr;
+        gap: 3px;
+    }
+
+    .modal-card,
+    .payment-redirect-card {
+        border-radius: 18px;
+        padding: 20px;
+    }
+}
+
+@media (max-width: 420px) {
+    .uber-quote-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
     .uber-quote-grid {
         grid-template-columns: 1fr 1fr;
     }
@@ -661,5 +733,11 @@ main.checkout-page {
     }
     .order-badge {
         min-width: auto;
+    }
+}
+
+@media (max-width: 420px) {
+    .uber-quote-grid {
+        grid-template-columns: 1fr;
     }
 }

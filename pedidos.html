@@ -120,6 +120,36 @@
     .item-row strong {
       color: #ff6600;
     }
+
+    @media (max-width: 760px) {
+      main {
+        padding: 22px 14px 42px;
+      }
+
+      .page-title {
+        font-size: 26px;
+      }
+
+      .order-card {
+        border-radius: 16px;
+      }
+
+      .order-card-header,
+      .order-summary,
+      .item-row {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .order-card-header,
+      .order-content {
+        padding: 18px;
+      }
+
+      .item-row span {
+        max-width: 100%;
+      }
+    }
   </style>
 </head>
 <body>

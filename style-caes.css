@@ -466,12 +466,65 @@ header {
     padding: 14px 16px;
   }
 
+  .header-content {
+    gap: 12px;
+  }
+
+  .home-button {
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    flex: 0 0 auto;
+  }
+
+  .header-content h1 {
+    font-size: 24px;
+  }
+
   .category-page {
     padding: 18px 12px 40px;
   }
 
   .category-hero {
+    min-height: auto;
     padding: 22px;
+    border-radius: 8px;
+    background-position: center;
+  }
+
+  .category-gatos .category-hero,
+  .category-passaros .category-hero,
+  .category-peixes .category-hero {
+    background-size: cover;
+    background-position: center;
+  }
+
+  .category-hero h2 {
+    font-size: 32px;
+  }
+
+  .category-hero p {
+    font-size: 15px;
+  }
+
+  .hero-actions a {
+    width: 100%;
+  }
+
+  .category-tools {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 14px 0;
+    scrollbar-width: none;
+  }
+
+  .category-tools::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tool-chip,
+  .sort-box {
+    flex: 0 0 auto;
   }
 
   .product-section-heading {
@@ -484,6 +537,34 @@ header {
   }
 
   .category-sidebar {
-    grid-template-columns: 1fr 1fr;
+    display: flex;
+    overflow-x: auto;
+    padding: 12px;
+    scrollbar-width: none;
+  }
+
+  .category-sidebar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-sidebar strong,
+  .category-sidebar a {
+    flex: 0 0 auto;
+  }
+
+  .product-media {
+    height: 200px;
+  }
+
+  .product-card h2 {
+    min-height: auto;
+  }
+
+  #alert {
+    left: 12px;
+    right: 12px;
+    bottom: 14px;
+    text-align: center;
+    border-radius: 12px;
   }
 }

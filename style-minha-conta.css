@@ -226,10 +226,40 @@ input:focus {
 }
 
 @media (max-width: 640px) {
-  .account-page {
-    padding: 0 18px 24px;
+  .account-header {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 18px;
   }
+
+  .account-header h1 {
+    font-size: 1.45rem;
+  }
+
+  .logo {
+    width: 72px;
+  }
+
+  .account-page {
+    padding: 0 12px 24px;
+  }
+
   .account-card {
-    padding: 20px;
+    border-radius: 18px;
+    padding: 18px;
+  }
+
+  .account-card-header {
+    flex-direction: column;
+  }
+
+  .btn-primary,
+  .btn-ghost {
+    width: 100%;
+  }
+
+  .item-row {
+    flex-direction: column;
+    gap: 4px;
   }
 }
