@@ -24,6 +24,8 @@ function initHeroCarousel() {
 
   let currentIndex = 0;
   let timer = null;
+  let touchStartX = 0;
+  let touchStartY = 0;
 
   function showSlide(index) {
     currentIndex = (index + slides.length) % slides.length;
@@ -63,6 +65,24 @@ function initHeroCarousel() {
 
   carousel?.addEventListener('mouseenter', stopAutoPlay);
   carousel?.addEventListener('mouseleave', startAutoPlay);
+  carousel?.addEventListener('touchstart', (event) => {
+    const touch = event.touches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    stopAutoPlay();
+  }, { passive: true });
+
+  carousel?.addEventListener('touchend', (event) => {
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - touchStartX;
+    const deltaY = touch.clientY - touchStartY;
+
+    if (Math.abs(deltaX) > 45 && Math.abs(deltaX) > Math.abs(deltaY)) {
+      showSlide(currentIndex + (deltaX < 0 ? 1 : -1));
+    }
+
+    startAutoPlay();
+  }, { passive: true });
   showSlide(0);
   startAutoPlay();
 }
@@ -102,9 +122,8 @@ function saveCart(cart) {
 }
 
 function updateCartCount() {
-  if (!cartCount) return;
   const total = getCart().reduce((sum, item) => sum + Number(item.quantidade || item.quantity || 1), 0);
-  cartCount.textContent = String(total);
+  if (cartCount) cartCount.textContent = String(total);
 }
 
 function showHomeToast(message) {
