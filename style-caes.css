@@ -568,3 +568,31 @@ header {
     border-radius: 12px;
   }
 }
+
+.product-card { scroll-margin-top: 100px; }
+.product-card:target { outline: 2px solid #ff8700; outline-offset: 3px; }
+.product-card .product-option { display: block; margin-top: 10px; font-size: .9rem; font-weight: 700; }
+.product-card .product-variant {
+  width: 100%;
+  margin: 5px 0 10px;
+  padding: 9px;
+  border: 1px solid #e8ceb2;
+  border-radius: 8px;
+  background: #fff9f1;
+  font: inherit;
+}
+.product-card .product-buy:disabled { opacity: .65; cursor: not-allowed; }
+.product-card .product-photos { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.product-card .product-photos button {
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  padding: 3px;
+  border: 1px solid #e8ceb2;
+  border-radius: 7px;
+  background: #fff;
+  box-shadow: none;
+}
+.product-card .product-photos img { width: 100%; height: 100%; object-fit: contain; }
+
+.original-price { display: block; color: #666; font-size: .85rem; font-weight: 400; }

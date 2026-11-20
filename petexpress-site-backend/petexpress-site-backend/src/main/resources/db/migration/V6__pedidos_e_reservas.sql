@@ -1,0 +1,14 @@
+ALTER TABLE produto_variacao ADD COLUMN reservado INTEGER NOT NULL DEFAULT 0 CHECK (reservado >= 0);
+ALTER TABLE pedido ADD COLUMN versao BIGINT NOT NULL DEFAULT 0;
+ALTER TABLE pedido ADD COLUMN chave_checkout VARCHAR(36);
+ALTER TABLE pedido ADD COLUMN referencia_pagamento VARCHAR(36);
+ALTER TABLE pedido ADD COLUMN url_pagamento TEXT;
+ALTER TABLE pedido ADD COLUMN reserva_ate TIMESTAMP;
+ALTER TABLE pedido ADD COLUMN cliente VARCHAR(255);
+ALTER TABLE pedido ADD COLUMN endereco_entrega TEXT;
+ALTER TABLE pedido ADD COLUMN expedicao VARCHAR(32) NOT NULL DEFAULT 'AGUARDANDO';
+ALTER TABLE pedido ADD COLUMN rastreio VARCHAR(100);
+ALTER TABLE item_pedido ADD COLUMN variacao_codigo VARCHAR(36);
+CREATE UNIQUE INDEX pedido_checkout_idx ON pedido (usuario_id, chave_checkout);
+CREATE UNIQUE INDEX pedido_referencia_idx ON pedido (referencia_pagamento);
+CREATE INDEX pedido_reserva_idx ON pedido (status, reserva_ate);

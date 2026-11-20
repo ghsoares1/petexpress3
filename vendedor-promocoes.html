@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Promoções | Painel do vendedor | PetExpress</title>
+<link rel="stylesheet" href="style-login.css"><link rel="stylesheet" href="style-vendedor.css">
+<script defer src="config.js"></script><script defer src="vendedor-layout.js"></script>
+<script defer src="vendedor-comum.js"></script><script defer src="vendedor-promocoes.js"></script>
+</head>
+<body class="seller-page">
+<header class="seller-header"><div class="seller-width seller-header-content">
+<a href="index.html" class="seller-brand"><img src="img/lg.png" alt="PetExpress"><span>Painel do vendedor</span></a>
+<nav aria-label="Painel do vendedor" id="seller-nav" hidden>
+<a href="vendedor-resumo.html" >Visão geral</a>
+<a href="vendedor.html" >Produtos</a>
+<a href="vendedor-estoque.html" >Estoque</a>
+<a href="vendedor-pedidos.html" >Pedidos</a>
+<a href="vendedor-promocoes.html" aria-current="page">Promoções</a>
+<button class="seller-secondary" id="seller-logout" type="button">Sair</button>
+</nav></div></header>
+<main class="seller-width">
+<p id="seller-message" role="status">Verificando acesso…</p>
+<div id="seller-access" hidden><a class="seller-secondary" href="login.html?redirect=promocoes">Entrar com outra conta</a></div>
+<section id="seller-catalog" hidden><div class="seller-heading"><div><h1>Promoções</h1><p>Programe ofertas e crie cupons para a loja.</p></div></div>
+<div class="seller-heading"><h2>Ofertas</h2><button class="btn-submit" id="seller-new-offer" type="button">Nova oferta</button></div>
+<p class="seller-stock-help">As ofertas usam o maior desconto vigente para cada tamanho. Um cupom pode ser aplicado sobre o preço em oferta.</p>
+<div class="auth-card seller-list"><div class="seller-table"><table><thead><tr><th>Oferta</th><th>Produto</th><th>Desconto</th><th>Período</th><th>Situação</th><th>Ações</th></tr></thead><tbody id="seller-offer-rows"></tbody></table></div><p id="seller-offer-empty" hidden>Nenhuma oferta cadastrada.</p></div>
+<div class="seller-heading seller-section-heading"><h2>Cupons</h2><button class="btn-submit" id="seller-new-coupon" type="button">Novo cupom</button></div>
+<div class="auth-card seller-list"><div class="seller-table"><table><thead><tr><th>Código</th><th>Desconto</th><th>Compra mínima</th><th>Usos / limite</th><th>Período</th><th>Situação</th><th>Ações</th></tr></thead><tbody id="seller-coupon-rows"></tbody></table></div><p id="seller-coupon-empty" hidden>Nenhum cupom cadastrado.</p></div></section>
+<dialog class="auth-card seller-dialog" id="seller-promo-dialog" aria-labelledby="seller-promo-title">
+<form id="seller-promo-form">
+<div class="seller-heading"><h2 id="seller-promo-title"></h2><button type="button" class="seller-secondary" id="seller-promo-close">Fechar</button></div>
+<div id="seller-offer-fields" class="seller-stock-fields">
+<label class="input-group">Nome da oferta<input name="nome" maxlength="100" required></label>
+<label class="input-group">Produto<select name="produtoId" required></select></label>
+<label class="input-group">Tamanho do pacote<select name="variacaoCodigo"><option value="">Todos os tamanhos</option></select></label>
+<label class="input-group">Desconto (%)<input name="percentual" type="number" min="0.01" max="99.99" step="0.01" required></label>
+</div>
+<div id="seller-coupon-fields" class="seller-fields" hidden>
+<label class="input-group">Código do cupom<input name="codigo" pattern="[A-Za-z0-9_-]{3,30}" maxlength="30" required></label>
+<label class="input-group">Tipo de desconto<select name="tipo"><option value="PERCENTUAL">Percentual (%)</option><option value="VALOR">Valor em reais (R$)</option></select></label>
+<label class="input-group">Desconto<input name="valor" type="number" min="0.01" max="999999.99" step="0.01" required></label>
+<label class="input-group">Compra mínima (R$)<input name="minimo" type="number" min="0" max="999999.99" step="0.01" required></label>
+<label class="input-group">Limite total de usos<input name="limite" type="number" min="1" max="2147483647" step="1" required></label>
+</div>
+<div class="seller-fields"><label class="input-group">Início<input name="inicio" type="datetime-local" required></label><label class="input-group">Término<input name="fim" type="datetime-local" required></label></div>
+<label class="seller-checkbox"><input name="ativo" type="checkbox" checked> Ativa</label>
+<p id="seller-promo-error" class="seller-stock-error" role="alert" hidden></p>
+<div class="seller-actions"><button class="btn-submit" type="submit">Salvar</button></div>
+</form></dialog></main></body></html>

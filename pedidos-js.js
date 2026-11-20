@@ -1,4 +1,5 @@
-﻿const LOGGED_USER_KEY = 'usuarioLogado';
+const { escapar } = window.PETEXPRESS_CATALOGO;
+const LOGGED_USER_KEY = 'usuarioLogado';
 const API_BASE_URL = window.PETEXPRESS_API_URL || 'http://localhost:8082';
 
 const ordersContainer = document.getElementById('ordersContainer');
@@ -59,7 +60,7 @@ function renderOrders(orders) {
     const itemsHtml = (order.itens || []).map((item) => {
       const itemName = item.nome || item.name || 'Produto';
       const itemQty = item.quantidade || item.quantity || 1;
-      return `<div class="item-row"><span>${itemName}</span><strong>Qtd: ${itemQty}</strong></div>`;
+      return `<div class="item-row"><span>${escapar(itemName)}</span><strong>Qtd: ${escapar(itemQty)}</strong></div>`;
     }).join('');
 
     const card = document.createElement('div');
@@ -67,22 +68,59 @@ function renderOrders(orders) {
     card.innerHTML = `
       <div class="order-card-header">
         <div>
-          <strong>Pedido ${order.numeroPedido}</strong>
-          <span>${formatDate(order.data)}</span>
+          <strong>Pedido ${escapar(order.numeroPedido)}</strong>
+          <span>${escapar(formatDate(order.data))}</span>
         </div>
-        <div class="order-status">${order.status || 'Aguardando'}</div>
+        <div class="order-status">${PETEXPRESS_PEDIDOS.pagamento[order.status] || 'Aguardando pagamento'}</div>
       </div>
       <div class="order-content">
         <div class="order-summary">
           <span>Total</span>
           <strong>${formatPrice(order.total)}</strong>
         </div>
+        ${order.descontoCupom > 0 ? `<p>Cupom ${escapar(order.cupom)} · − ${formatPrice(order.descontoCupom)}</p>` : ''}
+        <p><strong>Expedição</strong> · ${PETEXPRESS_PEDIDOS.expedicao[order.expedicao] || 'Aguardando'}</p>
+        ${order.rastreio ? `<p><strong>Rastreio</strong> · ${escapar(order.rastreio)}</p>` : ''}
+        ${order.cupom ? `<p>Cupom ${escapar(order.cupom)} · desconto de ${formatPrice(order.descontoCupom)}</p>` : ''}
         <div class="order-items-list">
           ${itemsHtml}
         </div>
       </div>
     `;
 
+    if (order.formaEntrega === 'Entrega via Uber') {
+      const area = document.createElement('div');
+      area.className = 'order-content';
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'btn-primary';
+      button.textContent = 'Acompanhar entrega';
+      const status = document.createElement('p');
+      status.setAttribute('role','status');
+      button.addEventListener('click', async () => {
+        button.disabled = true;
+        try {
+          const response = await fetch(API_BASE_URL + '/api/pedidos/' + order.id + '/entrega', {headers:getAuthHeaders()});
+          const entrega = await response.json();
+          if (!response.ok) throw new Error(entrega.message || 'Não foi possível consultar a entrega.');
+          const labels = { pending:'Buscando entregador',pickup:'Entregador a caminho da loja',pickup_complete:'Retirada realizada',
+            dropoff:'Entrega a caminho',delivered:'Entregue',canceled:'Entrega cancelada',returned:'Devolvida',
+            SOLICITANDO:'Solicitação em andamento',AGUARDANDO_CONFIRMACAO:'Aguardando confirmação da Uber' };
+          status.textContent = entrega.status ? (labels[entrega.status] || entrega.status) : 'A loja ainda está preparando a entrega.';
+          if (entrega.trackingUrl && new URL(entrega.trackingUrl).protocol === 'https:') {
+            const link = document.createElement('a');
+            link.href = entrega.trackingUrl;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            link.textContent = ' Abrir acompanhamento Uber Direct';
+            status.append(link);
+          }
+        } catch(error) { status.textContent = error.message; }
+        finally {button.disabled = false;}
+      });
+      area.append(button,status);
+      card.append(area);
+    }
     ordersContainer.appendChild(card);
   });
 }

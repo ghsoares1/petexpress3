@@ -6,6 +6,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class PedidoResponse {
+    private String cupom;
+    private Double descontoCupom;
+    private String cliente;
+    private String enderecoEntrega;
+    private String expedicao;
+    private String rastreio;
     private Long id;
     private String numeroPedido;
     private Long usuarioId;
@@ -21,6 +27,13 @@ public class PedidoResponse {
     public static PedidoResponse from(Pedido pedido) {
         PedidoResponse response = new PedidoResponse();
         response.setId(pedido.getId());
+        response.cupom = pedido.getCupomCodigo();
+        response.descontoCupom = pedido.getDescontoCupom();
+        response.cliente = pedido.getCliente() == null
+                ? pedido.getUsuario().getNome() : pedido.getCliente();
+        response.enderecoEntrega = pedido.getEnderecoEntrega();
+        response.expedicao = pedido.getExpedicao().name();
+        response.rastreio = pedido.getRastreio();
         response.setNumeroPedido(pedido.getNumeroPedido());
         response.setUsuarioId(pedido.getUsuario().getId());
         response.setUsuarioEmail(pedido.getUsuario().getEmail());
@@ -33,6 +46,13 @@ public class PedidoResponse {
         response.setItens(pedido.getItens().stream().map(ItemPedidoResponse::from).toList());
         return response;
     }
+
+    public String getCupom() { return cupom; }
+    public Double getDescontoCupom() { return descontoCupom; }
+    public String getCliente() { return cliente; }
+    public String getEnderecoEntrega() { return enderecoEntrega; }
+    public String getExpedicao() { return expedicao; }
+    public String getRastreio() { return rastreio; }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

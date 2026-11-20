@@ -1,3 +1,4 @@
+const { escapar } = window.PETEXPRESS_CATALOGO;
 const cartKey = 'carrinho';
 const userKey = 'usuarioCadastrado';
 const loggedKey = 'usuarioLogado';
@@ -26,15 +27,69 @@ const botaoFinalizar =
 const deliveryFeeRow = document.getElementById('deliveryFeeRow');
 const deliveryFeeValue = document.querySelector('.delivery-fee-value');
 const uberInfo = document.getElementById('uberInfo');
-const uberCodeEl = document.getElementById('uberCode');
+
 const uberStatusPill = document.getElementById('uberStatusPill');
 const uberFeeEl = document.getElementById('uberFee');
 const uberEtaEl = document.getElementById('uberEta');
-const uberDistanceEl = document.getElementById('uberDistance');
+
 let currentDeliveryFee = 0;
 let currentDeliveryMethod = null;
 let currentDeliveryCode = null;
 let currentUberDelivery = null;
+let checkoutInProgress = false;
+let cupomAplicado = null;
+let descontoCupom = 0;
+
+function itensDoCheckout(cart) {
+  return cart.map(item => ({
+    produtoId: item.catalogoId || (/^\d+$/.test(String(item.id)) ? Number(item.id) : null),
+    variacaoCodigo: item.variacaoCodigo,
+    nome: item.nome,
+    quantidade: Number(item.quantidade || 1),
+    preco: Number(item.preco)
+  }));
+}
+
+document.getElementById('coupon-apply').addEventListener('click', async () => {
+  const button = document.getElementById('coupon-apply');
+  const message = document.getElementById('coupon-message');
+  const user = getLoggedUser();
+  if (!user?.token) {
+    message.textContent = 'Entre na sua conta para aplicar o cupom.';
+    return;
+  }
+  const codigo = document.getElementById('coupon-code').value.trim();
+  if (!codigo) { message.textContent = 'Digite o código do cupom.'; return; }
+  button.disabled = true;
+  try {
+    const response = await fetch(API_BASE_URL + '/api/pagamento/orcamento', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + user.token },
+      body: JSON.stringify({ itens: itensDoCheckout(getCart()), cupom: codigo })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'Não foi possível aplicar o cupom.');
+    cupomAplicado = data.cupom;
+    descontoCupom = Number(data.desconto);
+    document.getElementById('coupon-code').readOnly = true;
+    document.getElementById('coupon-remove').hidden = false;
+    message.textContent = 'Cupom ' + data.cupom + ' aplicado.';
+    renderOrderSummary();
+  } catch (error) {
+    message.textContent = error.message;
+  } finally {
+    button.disabled = false;
+  }
+});
+
+document.getElementById('coupon-remove').addEventListener('click', () => {
+  cupomAplicado = null;
+  descontoCupom = 0;
+  document.getElementById('coupon-code').readOnly = false;
+  document.getElementById('coupon-remove').hidden = true;
+  document.getElementById('coupon-message').textContent = '';
+  renderOrderSummary();
+});
 
 console.log('checkout-js carregado');
 console.log('checkoutForm encontrado', checkoutForm);
@@ -46,40 +101,44 @@ function setCheckoutButtonState(loading) {
   botaoFinalizar.textContent = loading ? 'Redirecionando...' : 'Finalizar compra';
 }
 
-async function createPaymentPreference(cart) {
-  const payload = cart.map((item) => ({
-    title: item.nome || item.name || 'Produto',
-    quantity: Number(item.quantidade || item.quantity || 1),
-    price: Number(item.preco || item.price || 0),
-  }));
-
-  if (currentDeliveryMethod === 'Entrega via Uber' && currentDeliveryFee > 0) {
-    payload.push({
-      title: 'Taxa de entrega Uber',
-      quantity: 1,
-      price: Number(currentDeliveryFee),
-    });
-  }
+async function createPaymentPreference(cart, loggedUser) {
+  const fields = checkoutForm.elements;
+  const endereco = [
+    getCheckoutAddressLine(),
+    fields.complement.value.trim(),
+    fields.cep.value.trim() ? 'CEP ' + fields.cep.value.trim() : ''
+  ].filter(Boolean).join(' · ');
+  const payload = {
+    formaEntrega: fields.delivery.value,
+    cotacaoId: currentUberDelivery?.id,
+    cliente: fields.fullName.value.trim() || [loggedUser.nome, loggedUser.sobrenome].filter(Boolean).join(' '),
+    enderecoEntrega: endereco,
+    cupom: cupomAplicado,
+    itens: itensDoCheckout(cart)
+  };
+  const signature = JSON.stringify([loggedUser.id, payload]);
+  const stored = JSON.parse(sessionStorage.getItem('petexpressCheckout') || 'null');
+  payload.chave = stored?.signature === signature ? stored.chave : crypto.randomUUID();
+  sessionStorage.setItem('petexpressCheckout', JSON.stringify({ signature, chave: payload.chave }));
 
   const response = await fetch(`${API_BASE_URL}/api/pagamento/criar-preferencia`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + loggedUser.token },
     body: JSON.stringify(payload)
   });
-
   if (!response.ok) {
-    const errorText = await response.text();
-    throw new Error(`Falha ao criar preferência de pagamento: ${response.status} ${errorText}`);
+    if ([410, 502].includes(response.status)) sessionStorage.removeItem('petexpressCheckout');
+    const data = await response.json().catch(() => ({}));
+    throw new Error(data.message || 'Não foi possível iniciar o pagamento.');
   }
-
-  return response.json();
+  const data = await response.json();
+  sessionStorage.setItem('petexpressPedidoCheckout', JSON.stringify({ pedido: data.pedidoId, carrinho: JSON.stringify(cart) }));
+  return data;
 }
 
 async function handleCheckoutSubmit(event) {
   if (event) event.preventDefault();
-  console.log('clique em finalizar detectado');
+  if (checkoutInProgress) return;
 
   const cart = getCart();
   if (!cart.length) {
@@ -97,10 +156,11 @@ async function handleCheckoutSubmit(event) {
     return;
   }
 
+  checkoutInProgress = true;
   setCheckoutButtonState(true);
 
   try {
-    const data = await createPaymentPreference(cart);
+    const data = await createPaymentPreference(cart, loggedUser);
 
     if (!data || !data.init_point) {
       throw new Error('Resposta inválida do servidor. Não foi possível encontrar init_point.');
@@ -109,15 +169,14 @@ async function handleCheckoutSubmit(event) {
     window.location.href = data.init_point;
   } catch (error) {
     console.error('Erro ao finalizar pagamento:', error);
-    alert('Não foi possível finalizar o pagamento no momento. Por favor, tente novamente mais tarde.');
-    showMessage('Erro ao processar o pagamento. Veja o console para mais detalhes.', false);
+    showMessage(error.message || "Erro ao processar o pagamento.", false);
+    checkoutInProgress = false;
     setCheckoutButtonState(false);
   }
 }
 
 if (botaoFinalizar) {
   botaoFinalizar.addEventListener('click', (event) => {
-    console.log('clique em finalizar detectado');
     handleCheckoutSubmit(event);
   });
 }
@@ -190,8 +249,8 @@ function renderOrderSummary() {
     orderItem.className = 'order-item';
     orderItem.innerHTML = `
       <div class="item-info">
-        <span class="item-name">${item.nome}</span>
-        <span>Qtd: ${item.quantidade}</span>
+        <span class="item-name">${escapar(item.nome)}</span>
+        <span>Qtd: ${escapar(item.quantidade)}</span>
       </div>
       <strong>${formatPrice(itemTotal)}</strong>
     `;
@@ -199,7 +258,9 @@ function renderOrderSummary() {
     orderList.appendChild(orderItem);
   });
 
-  const totalWithDelivery = total + Number(currentDeliveryFee || 0);
+  const totalWithDelivery = total + Number(currentDeliveryFee || 0) - descontoCupom;
+  document.getElementById('coupon-discount-row').hidden = !descontoCupom;
+  document.getElementById('coupon-discount').textContent = '− ' + formatPrice(descontoCupom);
 
   if (deliveryFeeRow) {
     deliveryFeeRow.classList.toggle('hidden', !currentDeliveryFee);
@@ -209,10 +270,6 @@ function renderOrderSummary() {
   }
 
   summaryValue.textContent = formatPrice(totalWithDelivery);
-}
-
-function generateUberCode() {
-  return `UBER-${Math.floor(10000 + Math.random() * 90000)}`;
 }
 
 function getCheckoutAddressLine() {
@@ -238,74 +295,90 @@ function getCheckoutAddressLine() {
   return 'Endereço do checkout';
 }
 
-function createUberDeliverySimulation() {
-  const address = getCheckoutAddressLine();
-  const distance = Number((2.2 + Math.random() * 5.6).toFixed(1));
-  const eta = Math.round(16 + distance * 4 + Math.random() * 8);
-  const fee = Number((7.9 + distance * 2.2).toFixed(2));
 
-  return {
-    id: generateUberCode(),
-    status: 'Cotação criada',
-    fee,
-    eta,
-    distance,
-    pickup: 'PetExpress - Ipiranga',
-    dropoff: address,
-    createdAt: new Date().toISOString(),
-  };
-}
+let quoteVersion = 0;
 
-function renderUberSimulation() {
-  if (!currentUberDelivery) return;
-
-  currentDeliveryFee = Number(currentUberDelivery.fee || 0);
-  currentDeliveryCode = currentUberDelivery.id;
-
-  if (uberCodeEl) uberCodeEl.textContent = currentUberDelivery.id;
-  if (uberFeeEl) uberFeeEl.textContent = formatPrice(currentDeliveryFee);
-  if (uberEtaEl) uberEtaEl.textContent = `${currentUberDelivery.eta} min`;
-  if (uberDistanceEl) {
-    uberDistanceEl.textContent = `${currentUberDelivery.distance.toFixed(1).replace('.', ',')} km`;
-  }
-  if (uberStatusPill) uberStatusPill.textContent = 'Disponível';
-
-  try {
-    localStorage.setItem('uberDeliverySimulation', JSON.stringify(currentUberDelivery));
-  } catch (error) {
-    console.warn('Não foi possível salvar a cotação Uber:', error);
-  }
-
-  renderOrderSummary();
-}
-
-function resetUberSimulation() {
+function invalidarCotacao() {
+  quoteVersion++;
   currentUberDelivery = null;
   currentDeliveryFee = 0;
   currentDeliveryCode = null;
-  try {
-    localStorage.removeItem('uberDeliverySimulation');
-  } catch (error) {
-    console.warn('Não foi possível limpar a cotação Uber:', error);
-  }
+  document.getElementById('uberQuoteResult').classList.add('hidden');
+  document.getElementById('uberQuoteMessage').textContent = '';
+  uberStatusPill.textContent = 'Consulte o frete';
+  renderOrderSummary();
 }
 
 function updateDeliverySelection() {
-  const selected = document.querySelector('input[name="delivery"]:checked')?.value || null;
-  currentDeliveryMethod = selected;
-
-  if (selected === 'Entrega via Uber') {
-    currentUberDelivery = createUberDeliverySimulation();
-    uberInfo?.classList.remove('hidden');
-    uberInfo?.setAttribute('aria-hidden', 'false');
-    renderUberSimulation();
-    return;
+  currentDeliveryMethod = checkoutForm.elements.delivery.value;
+  invalidarCotacao();
+  const uber = currentDeliveryMethod === 'Entrega via Uber';
+  uberInfo.classList.toggle('hidden', !uber);
+  uberInfo.setAttribute('aria-hidden', String(!uber));
+  if (uber) {
+    checkoutForm.elements.uberNome.value = checkoutForm.elements.fullName.value || getLoggedUser()?.nome || '';
+    checkoutForm.elements.uberEndereco.value = getCheckoutAddressLine();
+    checkoutForm.elements.uberCep.value = checkoutForm.elements.cep.value;
+    checkoutForm.elements.uberTelefone.value = checkoutForm.elements.phone.value;
   }
+}
 
-  resetUberSimulation();
-  uberInfo?.classList.add('hidden');
-  uberInfo?.setAttribute('aria-hidden', 'true');
-  renderOrderSummary();
+document.getElementById('uberQuoteButton').addEventListener('click', async () => {
+  const message = document.getElementById('uberQuoteMessage');
+  const usuario = getLoggedUser();
+  if (!usuario?.token) { openModal(); return; }
+  let telefone = checkoutForm.elements.uberTelefone.value.replace(/[^0-9]/g, '');
+  if (telefone.length === 10 || telefone.length === 11) telefone = '55' + telefone;
+  const destino = {
+    nome: checkoutForm.elements.uberNome.value.trim(),
+    telefone: '+' + telefone,
+    endereco: {
+      rua: checkoutForm.elements.uberEndereco.value.trim(),
+      cidade: checkoutForm.elements.uberCidade.value.trim(),
+      estado: checkoutForm.elements.uberUF.value.trim().toUpperCase(),
+      cep: checkoutForm.elements.uberCep.value.trim()
+    }
+  };
+  const version = quoteVersion;
+  const button = document.getElementById('uberQuoteButton');
+  button.disabled = true;
+  message.textContent = 'Consultando a Uber Direct…';
+  try {
+    const response = await fetch(API_BASE_URL + '/api/entregas/cotacoes', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json', Authorization:'Bearer ' + usuario.token},
+      body: JSON.stringify(destino)
+    });
+    const quote = await response.json();
+    if (!response.ok) throw new Error(quote.message || 'Não foi possível consultar o frete.');
+    if (version !== quoteVersion) return;
+    currentUberDelivery = quote;
+    currentDeliveryFee = Number(quote.valor);
+    currentDeliveryCode = quote.id;
+    uberFeeEl.textContent = formatPrice(quote.valor);
+    uberEtaEl.textContent = quote.minutos == null ? 'A confirmar' : quote.minutos + ' min';
+    document.getElementById('uberExpires').textContent = new Date(quote.expiraEm).toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+    document.getElementById('uberQuoteResult').classList.remove('hidden');
+    uberStatusPill.textContent = 'Cotação recebida';
+    message.textContent = 'Valor informado pela Uber Direct.';
+    renderOrderSummary();
+  } catch(error) { if (version === quoteVersion) message.textContent = error.message; }
+  finally {button.disabled = false;}
+});
+
+async function verificarIntegracoes() {
+  const radio = document.querySelector('input[value="Entrega via Uber"]');
+  const aviso = document.getElementById('uberAvailability');
+  try {
+    const response = await fetch(API_BASE_URL + '/api/integracoes/status');
+    if (!response.ok) throw new Error();
+    const status = await response.json();
+    radio.disabled = !status.entregaConfigurada;
+    aviso.textContent = status.entregaConfigurada ? 'Consulte a disponibilidade Uber Direct para seu endereço.' : 'Uber Direct indisponível: a loja ainda precisa configurar a conta de entregas.';
+    if (!status.pagamentoConfigurado) showMessage('O pagamento ainda precisa ser configurado pela loja.', false);
+  } catch {
+    aviso.textContent = 'Não foi possível verificar o serviço de entrega.';
+  }
 }
 
 function fillSavedAddress(user) {
@@ -338,13 +411,13 @@ function fillSavedAddress(user) {
     </div>
     <div class="saved-address-line saved-address-main">
       <span class="saved-address-icon">📍</span>
-      <span>${addressLine}${neighborhoodLine}</span>
+      <span>${escapar(addressLine)}${escapar(neighborhoodLine)}</span>
     </div>
     <div class="saved-address-line saved-address-small">
       <span>CEP</span>
-      <span>${cep}</span>
+      <span>${escapar(cep)}</span>
     </div>
-    ${complement ? `<div class="saved-address-line saved-address-small"><span>Complemento</span><span>${complement}</span></div>` : ''}
+    ${complement ? `<div class="saved-address-line saved-address-small"><span>Complemento</span><span>${escapar(complement)}</span></div>` : ''}
   `;
 }
 
@@ -409,6 +482,11 @@ function validateForm() {
     return false;
   }
 
+  if (checkoutForm.elements.delivery.value === 'Entrega via Uber'
+      && (!currentUberDelivery || new Date(currentUberDelivery.expiraEm) <= new Date())) {
+    showMessage('Consulte o frete Uber Direct antes de finalizar a compra.', false);
+    return false;
+  }
   return true;
 }
 
@@ -423,10 +501,7 @@ function closeModal() {
 Array.from(checkoutForm.addressChoice).forEach((radio) => {
   radio.addEventListener('change', () => {
     updateAddressView();
-    if (currentDeliveryMethod === 'Entrega via Uber') {
-      currentUberDelivery = createUberDeliverySimulation();
-      renderUberSimulation();
-    }
+    invalidarCotacao();
   });
 });
 
@@ -434,12 +509,8 @@ document.querySelectorAll('#deliveryOptions input[name="delivery"]').forEach((ra
   radio.addEventListener('change', updateDeliverySelection);
 });
 
-['address', 'number', 'neighborhood'].forEach((fieldName) => {
-  checkoutForm?.[fieldName]?.addEventListener('input', () => {
-    if (currentDeliveryMethod !== 'Entrega via Uber') return;
-    currentUberDelivery = createUberDeliverySimulation();
-    renderUberSimulation();
-  });
+['address','number','neighborhood','cep','fullName','phone','uberNome','uberEndereco','uberCidade','uberUF','uberCep','uberTelefone'].forEach(fieldName => {
+  checkoutForm.elements[fieldName]?.addEventListener('input', invalidarCotacao);
 });
 
 savedAddressBlock?.addEventListener('click', (event) => {
@@ -491,3 +562,4 @@ function initializePage() {
 }
 
 initializePage();
+verificarIntegracoes();

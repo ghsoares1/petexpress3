@@ -1,3 +1,4 @@
+const { escapar, link } = window.PETEXPRESS_CATALOGO;
 const maisVendidosContainer = document.getElementById("mais-vendidos-container");
 const inputBusca = document.getElementById("busca");
 const sugestoes = document.getElementById("sugestoes-busca");
@@ -95,7 +96,7 @@ function obterPaginaPorTipo(tipoAnimal) {
   if (tipo.includes("pássaro") || tipo.includes("passaro") || tipo.includes("ave") || tipo.includes("aves")) return "passaros.html";
   if (tipo.includes("peixe") || tipo.includes("peixes") || tipo.includes("aquário") || tipo.includes("aquario")) return "peixes.html";
 
-  return "produto.html";
+  return "todos.html";
 }
 
 function formatarPreco(valor) {
@@ -141,6 +142,10 @@ function showHomeToast(message) {
 }
 
 function addToCart(produto) {
+  if (produto.variacoes?.length) {
+    window.location.href = link(produto.id, obterPaginaPorTipo(produto.tipoAnimal));
+    return;
+  }
   const cart = getCart();
   const id = getProductId(produto);
   const existing = cart.find((item) => String(item.id) === String(id));
@@ -150,6 +155,7 @@ function addToCart(produto) {
   } else {
     cart.push({
       id,
+      catalogoId: produto.id,
       nome: produto.nome,
       preco: Number(produto.preco || 0),
       imagem: produto.imagem || 'img/c1.png',
@@ -177,17 +183,17 @@ function renderizarProdutos(lista) {
     card.innerHTML = `
       <div class="product-media">
         <span class="product-ribbon">Destaque</span>
-        <img src="${produto.imagem || "img/c1.jpg"}" alt="${produto.nome}">
+        <img src="${escapar(produto.imagem || "img/c1.png")}" alt="${escapar(produto.nome)}">
       </div>
       <div class="info">
-        <h3>${produto.nome}</h3>
+        <h3>${escapar(produto.nome)}</h3>
         <span class="badge">
-          ${produto.tipoAnimal.charAt(0).toUpperCase() + produto.tipoAnimal.slice(1).toLowerCase()}
+          ${escapar(produto.tipoAnimal || "Pet")}
         </span>
-        <p class="price">${formatarPreco(produto.preco)}</p>
+        <p class="price">${produto.precoOriginal > produto.preco ? `<del class="original-price">${formatarPreco(produto.precoOriginal)}</del> ` : ''}${formatarPreco(produto.preco)}</p>
         <div class="card-actions">
           <button class="view-product" type="button" data-action="view" data-id="${getProductId(produto)}">Comprar</button>
-          <button class="add-cart-btn" type="button" data-action="add" data-id="${getProductId(produto)}" aria-label="Adicionar ${produto.nome} ao carrinho">
+          <button class="add-cart-btn" type="button" data-action="add" data-id="${getProductId(produto)}" aria-label="Adicionar ${escapar(produto.nome)} ao carrinho">
             <i class="fas fa-cart-plus"></i>
           </button>
         </div>
@@ -208,7 +214,7 @@ function renderizarProdutos(lista) {
         return;
       }
 
-      window.location.href = obterPaginaPorTipo(produto.tipoAnimal);
+      window.location.href = link(produto.id, obterPaginaPorTipo(produto.tipoAnimal));
     });
   });
 }
@@ -222,10 +228,7 @@ async function carregarProdutos() {
     }
 
     produtos = await resposta.json();
-    const produtosUnicos = produtos.filter((produto, index, lista) =>
-      lista.findIndex((item) => item.nome === produto.nome) === index
-    );
-    const maisVendidos = produtosUnicos.slice(0, 4);
+    const maisVendidos = produtos.slice(0, 4);
     renderizarProdutos(maisVendidos);
   } catch (erro) {
     console.error("Erro:", erro);
@@ -257,15 +260,15 @@ inputBusca.addEventListener("input", function () {
     const li = document.createElement("li");
 
     li.innerHTML = `
-      <img src="${produto.imagem || "img/c1.jpg"}" alt="${produto.nome}">
+      <img src="${escapar(produto.imagem || "img/c1.png")}" alt="${escapar(produto.nome)}">
       <div class="info">
-        <span class="nome">${produto.nome}</span>
+        <span class="nome">${escapar(produto.nome)}</span>
         <span class="preco">${formatarPreco(produto.preco)}</span>
       </div>
     `;
 
     li.addEventListener("click", () => {
-      window.location.href = obterPaginaPorTipo(produto.tipoAnimal);
+      window.location.href = link(produto.id, obterPaginaPorTipo(produto.tipoAnimal));
     });
 
     sugestoes.appendChild(li);
@@ -284,7 +287,7 @@ formBusca.addEventListener("submit", function (e) {
   );
 
   if (resultado) {
-    window.location.href = obterPaginaPorTipo(resultado.tipoAnimal);
+    window.location.href = link(resultado.id, obterPaginaPorTipo(resultado.tipoAnimal));
   }
 });
 

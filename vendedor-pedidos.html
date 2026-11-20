@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pedidos | Painel do vendedor | PetExpress</title>
+  <link rel="stylesheet" href="style-login.css">
+  <link rel="stylesheet" href="style-vendedor.css">
+  <script defer src="config.js"></script>
+  <script defer src="pedido-status.js"></script>
+  <script defer src="vendedor-layout.js"></script>
+<script defer src="vendedor-comum.js"></script>
+  <script defer src="vendedor-pedidos.js"></script>
+</head>
+<body class="seller-page">
+  <header class="seller-header">
+    <div class="seller-width seller-header-content">
+      <a href="index.html" class="seller-brand"><img src="img/lg.png" alt="PetExpress"><span>Painel do vendedor</span></a>
+      <nav aria-label="Painel do vendedor" id="seller-nav" hidden>
+        <a href="vendedor-resumo.html">Visão geral</a>
+        <a href="vendedor.html">Produtos</a>
+        <a href="vendedor-estoque.html">Estoque</a>
+        <a href="vendedor-pedidos.html" aria-current="page">Pedidos</a>
+        <a href="vendedor-promocoes.html">Promoções</a>
+        <button class="seller-secondary" type="button" id="seller-logout">Sair</button>
+      </nav>
+    </div>
+  </header>
+  <main class="seller-width">
+    <p id="seller-message" role="status">Verificando acesso…</p>
+    <div id="seller-access" hidden>
+      <a class="seller-secondary" href="login.html?redirect=pedidos-vendedor">Entrar com outra conta</a>
+    </div>
+    <section id="seller-catalog" hidden>
+      <div class="seller-heading">
+        <div><h1>Pedidos</h1><p>Acompanhe pagamentos e atualize a expedição.</p></div>
+        <button type="button" class="seller-secondary" id="seller-reload">Atualizar lista</button>
+      </div>
+      <section class="auth-card seller-list" aria-label="Lista de pedidos">
+        <div class="seller-filters seller-order-filters">
+          <label class="input-group">Buscar pedido
+            <input id="seller-order-search" type="search" placeholder="Número, cliente ou e-mail">
+          </label>
+          <label class="input-group">Pagamento
+            <select id="seller-payment-filter"><option value="">Todos</option></select>
+          </label>
+          <label class="input-group">Expedição
+            <select id="seller-dispatch-filter"><option value="">Todas</option></select>
+          </label>
+        </div>
+        <div class="seller-table">
+          <table>
+            <thead><tr><th scope="col">Pedido</th><th scope="col">Cliente</th><th scope="col">Total</th><th scope="col">Pagamento</th><th scope="col">Expedição</th><th scope="col">Ações</th></tr></thead>
+            <tbody id="seller-order-rows"></tbody>
+          </table>
+        </div>
+        <p class="seller-empty" id="seller-order-empty" hidden>Nenhum pedido encontrado.</p>
+      </section>
+    </section>
+    <dialog id="seller-order-dialog" class="auth-card seller-dialog" aria-labelledby="seller-order-title">
+      <div class="seller-heading">
+        <div><h2 id="seller-order-title"></h2><p id="seller-order-date"></p></div>
+        <button class="seller-secondary" type="button" id="seller-order-close">Fechar</button>
+      </div>
+      <div id="seller-order-details"></div>
+      <form id="seller-order-form">
+        <label class="input-group" id="seller-tracking" hidden>Código de rastreio (opcional)
+          <input name="rastreio" maxlength="100">
+        </label>
+        <p id="seller-order-error" class="seller-stock-error" hidden role="alert"></p>
+        <div class="seller-actions"><button class="btn-submit" type="submit" id="seller-order-next" hidden></button></div>
+      </form>
+    </dialog>
+  </main>
+</body>
+</html>

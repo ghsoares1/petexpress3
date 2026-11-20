@@ -1,6 +1,8 @@
 package com.petexpress.petexpress_site_backend.model;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 public class Produto {
@@ -8,6 +10,9 @@ public class Produto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Version
+    private Long versao;
 
     private String nome;
     private String tipoProduto;
@@ -17,7 +22,26 @@ public class Produto {
     private String descricao;
     private String imagem;
 
-    public Produto() {}
+    private String categoria;
+    private String fotos;
+
+    @Enumerated(EnumType.STRING)
+    private Situacao situacao = Situacao.PUBLICADO;
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "produto_variacao", joinColumns = @JoinColumn(name = "produto_id"))
+    @OrderColumn(name = "posicao")
+    private List<VariacaoProduto> variacoes = new ArrayList<>();
+
+    public enum Situacao { RASCUNHO, PUBLICADO, PAUSADO }
+
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
+    public List<String> getFotos() { return fotos == null ? List.of() : fotos.lines().toList(); }
+    public void setFotos(List<String> urls) { this.fotos = String.join("\n", urls); }
+    public Situacao getSituacao() { return situacao; }
+    public void setSituacao(Situacao situacao) { this.situacao = situacao; }
+    public List<VariacaoProduto> getVariacoes() { return variacoes; }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

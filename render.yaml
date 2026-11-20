@@ -1,7 +1,24 @@
 services:
   - type: web
-    name: petexpress-site
-    runtime: static
-    rootDir: .
-    buildCommand: mkdir -p dist && cp -r *.html *.css *.js img dist/
-    staticPublishPath: ./dist
+    name: petexpress
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    disk:
+      name: petexpress-dados
+      mountPath: /app/data
+      sizeGB: 1
+    envVars:
+      - key: JWT_SECRET
+        generateValue: true
+      - key: PETEXPRESS_VENDEDOR_IDS
+        sync: false
+      - key: MERCADOPAGO_ACCESS_TOKEN
+        sync: false
+      - key: MERCADOPAGO_PUBLIC_KEY
+        sync: false
+      - key: MERCADOPAGO_CHECKOUT_MODE
+        value: production
+

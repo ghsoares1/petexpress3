@@ -19,7 +19,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
 
-    public JwtAuthenticationFilter(JwtService jwtService) {
+    private final AcessoVendedor acessoVendedor;
+
+    public JwtAuthenticationFilter(JwtService jwtService, AcessoVendedor acessoVendedor) {
+        this.acessoVendedor = acessoVendedor;
         this.jwtService = jwtService;
     }
 
@@ -34,7 +37,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                         user,
                         null,
-                        List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                        acessoVendedor.permitido(user)
+                                ? List.of(new SimpleGrantedAuthority("ROLE_USER"), new SimpleGrantedAuthority("ROLE_VENDEDOR"))
+                                : List.of(new SimpleGrantedAuthority("ROLE_USER"))
                 );
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             });

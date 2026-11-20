@@ -1,9 +1,9 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pagamento Aprovado - PetExpress</title>
+  <title>Acompanhamento do pagamento - PetExpress</title>
   <link rel="stylesheet" href="style-minha-conta.css" />
 </head>
 <body>
@@ -11,28 +11,29 @@
     <a href="index.html" class="brand-link">
       <img src="img/lg.png" alt="Logo PetExpress" class="logo" />
     </a>
-    <h1>Pedido Confirmado</h1>
+    <h1>Acompanhe seu pedido</h1>
   </header>
 
   <main class="account-page">
     <section class="account-card">
       <div class="account-card-header">
         <div>
-          <span class="eyebrow">Sucesso</span>
-          <h2>Pagamento aprovado!</h2>
+          
+          <h2 id="paymentStatus">Consultando pagamento…</h2>
         </div>
       </div>
-      <p class="result-message">Seu pedido foi confirmado com sucesso.</p>
+      <p class="result-message">O status é atualizado após a confirmação do pagamento.</p>
       <p class="order-summary">Número do pedido: <strong id="orderNumber">—</strong></p>
       <p id="orderInfo" class="feedback"></p>
       <div class="form-actions">
-        <a href="index.html" class="btn-primary">Voltar para a loja</a>
+        <a href="pedidos.html" class="btn-primary">Meus pedidos</a>
       </div>
       <p id="alertMessage" class="feedback" style="margin-top: 16px;"></p>
     </section>
   </main>
 
   <script src="config.js"></script>
+  <script src="pedido-status.js"></script>
   <script src="sucesso-js.js"></script>
 </body>
 </html>

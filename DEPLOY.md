@@ -1,75 +1,50 @@
-# Deploy da PetExpress
+# Publicação do PetExpress
 
-Este projeto tem duas partes:
+A publicação usa um único aplicativo Java que serve o site e a API no mesmo endereço HTTPS. O Dockerfile da raiz inclui HTML, CSS, JavaScript e imagens no pacote do backend. O navegador chama a API do próprio endereço do site.
 
-- Frontend estatico: arquivos `.html`, `.css`, `.js` e `img/` na raiz.
-- Backend Spring Boot: `petexpress-site-backend/petexpress-site-backend`.
+## GitHub
 
-## 1. Subir no GitHub
+Envie a raiz inteira deste projeto para o repositório escolhido, incluindo Dockerfile, .dockerignore, render.yaml, img/ e petexpress-site-backend/. As regras de Git ignoram bancos locais, arquivos de ambiente, logs, capturas de teste e saídas de compilação.
 
-1. Crie um repositorio no GitHub.
-2. Envie esta pasta inteira para o repositorio.
-3. Confirme que `render.yaml`, `config.js` e a pasta `petexpress-site-backend/` foram enviados.
+## Hospedagem no Render
 
-## 2. Criar o deploy no Render
+O render.yaml configura um Web Service Docker chamado petexpress com disco persistente em /app/data e verificação de saúde em /health. Esse arquivo usa o plano Starter e disco de 1 GB. A criação desse serviço tem custo no Render. Confirme o plano e o preço no painel antes de concluir a criação.
 
-1. Entre em `https://dashboard.render.com`.
-2. Clique em **New** > **Blueprint**.
-3. Conecte o repositorio do GitHub.
-4. O Render deve encontrar o arquivo `render.yaml`.
-5. Clique para criar os dois servicos:
-   - `petexpress-site-backend`
-   - `petexpress-site`
+1. Conecte o repositório no Render e crie um Blueprint usando o render.yaml da raiz.
+2. Confira o serviço Docker, plano e disco persistente antes de publicar.
+3. O JWT_SECRET é gerado pelo Render. Guarde a mesma chave para manter as sessões válidas entre publicações.
+4. Configure PETEXPRESS_VENDEDOR_IDS com os IDs das contas autorizadas. Na primeira publicação, deixe o valor vazio, cadastre sua conta no site, consulte seu ID na resposta de login e então autorize esse ID no Render.
+5. Configure as credenciais do Mercado Pago no painel do Render para habilitar o checkout. Catálogo, cadastro, login e painel funcionam sem essas credenciais.
+6. O backend usa automaticamente RENDER_EXTERNAL_URL como URL pública. Caso use domínio próprio, configure APP_BASE_URL com esse domínio.
+7. Abra a URL HTTPS indicada pelo Render. Esse é o link para compartilhar com outras pessoas.
 
-O backend Spring Boot sobe como Docker, porque o Render atualmente recomenda Docker para projetos Java/JVM. O Dockerfile usado fica em `petexpress-site-backend/petexpress-site-backend/dockerfile`.
+Para um serviço Docker criado manualmente, mantenha o contexto de build na raiz do repositório e selecione ./Dockerfile. A raiz de execução é /app, e o banco fica em /app/data/petexpress.db. Use uma única instância com este banco SQLite.
 
-O frontend publica uma pasta `dist` criada no build com apenas HTML/CSS/JS/imagens. Assim o codigo do backend nao fica exposto como arquivo estatico.
+## Dados existentes
 
-## 3. Variaveis do backend
+A instalação nova aplica as migrações e carrega o catálogo inicial. As contas, pedidos e produtos cadastrados no computador ficam no banco local. Para levar esses dados ao servidor, transfira uma cópia consistente do banco utilizado para o disco persistente antes de iniciar o aplicativo. Essa transferência deve ser feita por um canal privado da hospedagem.
 
-No servico `petexpress-site-backend`, configure:
+A conta equipe@example.test é usada na demonstração local. Para a publicação, cadastre e autorize sua própria conta.
 
-```text
-MERCADOPAGO_ACCESS_TOKEN=seu_access_token_do_mercado_pago
-MERCADOPAGO_PUBLIC_KEY=sua_public_key_do_mercado_pago
-MERCADOPAGO_CHECKOUT_MODE=production
-APP_BASE_URL=https://petexpress-site-backend.onrender.com
-```
+## Validação da publicação
 
-Se o Render criar uma URL diferente para o backend, atualize `APP_BASE_URL` com a URL real.
+- GET /health deve responder com status ok.
+- / deve abrir a home e /produtos deve listar o catálogo.
+- Confira as imagens, cadastro e login em outro dispositivo.
+- Acesse vendedor-resumo.html usando a conta autorizada e teste cadastro de produto, estoque e pedidos.
+- Reinicie o serviço e confirme que os dados persistem no disco.
 
-Importante: nao coloque as chaves do Mercado Pago direto no codigo. O `render.yaml` deixa essas variaveis como `sync: false`, entao o Render vai pedir os valores no painel durante a criacao do Blueprint.
+## Execução local
 
-## 4. Apontar o frontend para a API
+Use JDK 17 ou superior e execute o Maven Wrapper em petexpress-site-backend/petexpress-site-backend. O arquivo application.properties contém as opções de ambiente. O servidor local usa a porta 8082. Para servir os arquivos da raiz em desenvolvimento, inicie o backend na sua pasta interna.
 
-Abra `config.js`.
+## Pagamento, estoque e promoções
 
-Se o backend ficou com outra URL, troque:
+Configure MERCADOPAGO_ACCESS_TOKEN da conta recebedora. O retorno e as notificações de pagamento usam o endereço público do aplicativo. APP_BASE_URL e PETEXPRESS_FRONTEND_URL podem ser configurados caso os endereços sejam personalizados.
 
-```js
-const productionApiUrl = 'https://petexpress-site-backend.onrender.com';
-```
+O checkout reserva embalagens por 30 minutos. O servidor verifica as reservas vencidas com uma margem adicional de 10 minutos. Pagamentos em processamento mantêm a reserva. Aprovações tardias e estornos ficam em revisão.
 
-pela URL real do backend.
+As ofertas podem ser programadas por produto ou tamanho. Entre ofertas simultâneas, vale o maior percentual. Um cupom adicional pode ser aplicado por pedido, respeitando validade, compra mínima e limite de uso. O pedido preserva o desconto e os preços da compra.
 
-## 5. Testes depois do deploy
+Os relatórios consideram pedidos aprovados. Pedidos antigos sem forma de pagamento registrada aparecem como Não informado. A entrega via Uber é uma simulação com taxa fixa de R$ 19,90.
 
-1. Abra a URL do backend:
-
-```text
-https://petexpress-site-backend.onrender.com/produtos
-```
-
-Se carregar uma lista ou JSON, a API subiu.
-
-2. Abra a URL do frontend.
-3. Teste:
-   - cadastro
-   - login
-   - carrinho
-   - checkout
-   - redirecionamento do Mercado Pago
-
-## Observacao sobre banco de dados
-
-O projeto usa SQLite (`petexpress.db`). Para trabalho/teste, isso pode funcionar. Para loja real em producao, o ideal e migrar para Postgres, porque deploy gratuito pode reiniciar e perder alteracoes locais no arquivo do banco.

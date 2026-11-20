@@ -1,152 +1,127 @@
-const CART_KEY = 'carrinho';
-const API_BASE_URL = window.PETEXPRESS_API_URL || 'http://localhost:8082';
-const categoryConfig = window.PETEXPRESS_CATEGORY || {};
+const { escapar, link } = window.PETEXPRESS_CATALOGO;
+const categoryConfig = window.PETEXPRESS_CATEGORY;
 const productGrid = document.getElementById('productGrid');
 const productCount = document.getElementById('productCount');
+const alertBox = document.getElementById('alert');
+let alertTimer;
 
-function getCart() {
-  try {
-    const stored = localStorage.getItem(CART_KEY);
-    return stored ? JSON.parse(stored) : [];
-  } catch (error) {
-    console.error('Erro ao carregar carrinho:', error);
-    return [];
-  }
-}
-
-function saveCart(cart) {
-  localStorage.setItem(CART_KEY, JSON.stringify(cart));
-}
-
-function showAlert() {
-  const alertBox = document.getElementById('alert');
-  if (!alertBox) return;
+function showAlert(message) {
+  alertBox.textContent = message;
+  alertBox.setAttribute('role', 'status');
   alertBox.classList.remove('hidden');
   alertBox.classList.add('show');
-
-  setTimeout(() => {
+  clearTimeout(alertTimer);
+  alertTimer = setTimeout(() => {
     alertBox.classList.remove('show');
     alertBox.classList.add('hidden');
   }, 2500);
 }
 
 function formatPrice(value) {
-  return `R$ ${Number(value || 0).toFixed(2).replace('.', ',')}`;
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
 }
 
-function getProductId(produto) {
-  return produto.id ?? produto.codigo ?? produto.nome;
-}
-
-function addToCart(button) {
-  if (!button) return;
-  const card = button.closest('.product-card');
-  if (!card) return;
-
-  const produto = {
-    id: card.dataset.id,
-    nome: card.querySelector('h2')?.textContent.trim() || 'Produto',
-    preco: Number(card.dataset.price || 0),
-    imagem: card.querySelector('img')?.getAttribute('src') || 'img/c1.png',
-    quantidade: 1
-  };
-
-  const cart = getCart();
-  const existing = cart.find((item) => String(item.id) === String(produto.id));
-
-  if (existing) {
-    existing.quantidade = Number(existing.quantidade || 1) + 1;
-  } else {
-    cart.push(produto);
+function addToCart(produto, variacao) {
+  let cart;
+  try {
+    cart = JSON.parse(localStorage.getItem('carrinho')) || [];
+  } catch {
+    cart = [];
   }
-
-  saveCart(cart);
-  showAlert();
-}
-
-function normalizeProduct(produto) {
-  return {
-    id: getProductId(produto),
-    nome: produto.nome || 'Produto PetExpress',
-    tipoProduto: produto.tipoProduto || produto.marca || 'Marca parceira',
-    tipoAnimal: produto.tipoAnimal || categoryConfig.tipoAnimal || categoryConfig.animalLabel || 'Pet',
-    preco: Number(produto.preco || 0),
-    imagem: produto.imagem || 'img/c1.png',
-    tag: produto.tag || categoryConfig.productTag || 'Produto pet'
-  };
-}
-
-function uniqueProducts(list) {
-  return list.filter((produto, index, all) =>
-    all.findIndex((item) => String(item.nome).toLowerCase() === String(produto.nome).toLowerCase()) === index
-  );
-}
-
-function renderProducts(list) {
-  if (!productGrid) return;
-  const products = uniqueProducts(list.map(normalizeProduct));
-  productGrid.innerHTML = '';
-  if (productCount) productCount.textContent = String(products.length);
-
-  if (!products.length) {
-    productGrid.innerHTML = '<p class="empty-products">Nenhum produto encontrado.</p>';
+  const id = variacao ? produto.id + ':' + variacao.codigo : String(produto.id);
+  const existing = cart.find(item => String(item.id) === id);
+  const quantidade = Number(existing?.quantidade || 0) + 1;
+  if (variacao && quantidade > variacao.estoque) {
+    showAlert('Você já adicionou todo o estoque disponível desta embalagem.');
     return;
   }
+  const item = {
+    id,
+    catalogoId: produto.id,
+    variacaoCodigo: variacao?.codigo,
+    nome: variacao ? produto.nome + ' · ' + variacao.embalagem : produto.nome,
+    preco: variacao?.preco ?? produto.preco,
+    imagem: produto.imagem || 'img/c1.png',
+    quantidade
+  };
+  if (existing) Object.assign(existing, item);
+  else cart.push(item);
+  localStorage.setItem('carrinho', JSON.stringify(cart));
+  showAlert('Produto adicionado ao carrinho!');
+}
 
-  products.forEach((produto) => {
-    const card = document.createElement('div');
-    card.className = 'product-card';
-    card.dataset.id = produto.id;
-    card.dataset.price = String(produto.preco);
-    card.innerHTML = `
-      <div class="product-media">
-        <span class="discount-badge">Oferta</span>
-        <img src="${produto.imagem}" alt="${produto.nome}">
+function renderProduct(produto) {
+  const card = document.createElement('div');
+  card.className = 'product-card';
+  card.id = 'produto-' + produto.id;
+  const variacoes = produto.variacoes || [];
+  const fotos = produto.fotos || [];
+  card.innerHTML = `
+    <div class="product-media">
+      <img src="${escapar(produto.imagem || 'img/c1.png')}" alt="${escapar(produto.nome)}" loading="lazy">
+    </div>
+    <div class="product-info">
+      <span class="product-brand">${escapar(produto.tipoProduto || 'Marca parceira')}</span>
+      <h2>${escapar(produto.nome)}</h2>
+      <div class="product-tags">
+        <span>${escapar(produto.categoria || categoryConfig.productTag)}</span>
       </div>
-      <div class="product-info">
-        <span class="product-brand">${produto.tipoProduto}</span>
-        <h2>${produto.nome}</h2>
-        <div class="product-tags">
-          <span>${produto.tipoAnimal}</span>
-          <span>${produto.tag}</span>
-        </div>
-        <span class="price-label">À vista</span>
-        <p class="price">${formatPrice(produto.preco)}</p>
-        <p class="installments">Entrega rápida ou retirada conforme disponibilidade</p>
-      </div>
-      <button onclick="addToCart(this)">Comprar</button>
-    `;
-    productGrid.appendChild(card);
+      ${produto.descricao ? `<p>${escapar(produto.descricao)}</p>` : ''}
+      ${fotos.length > 1 ? `<div class="product-photos" aria-label="Fotos de ${escapar(produto.nome)}">
+        ${fotos.map((foto, index) => `<button type="button" data-foto="${index}" aria-label="Ver foto ${index + 1}"><img src="${escapar(foto)}" alt=""></button>`).join('')}
+      </div>` : ''}
+      ${variacoes.length ? `<label for="embalagem-${produto.id}" class="product-option">Embalagem</label>
+        <select id="embalagem-${produto.id}" class="product-variant">
+          ${variacoes.map((v, index) => `<option value="${index}" ${v.estoque ? '' : 'disabled'}>${escapar(v.embalagem)}${v.estoque ? '' : ' · Esgotada'}</option>`).join('')}
+        </select>` : ''}
+      <span class="price-label">À vista</span>
+      <p class="price" aria-live="polite"></p>
+    </div>
+    <button class="product-buy" type="button">Comprar</button>
+  `;
+  const select = card.querySelector('select');
+  const button = card.querySelector('.product-buy');
+  const price = card.querySelector('.price');
+  function updatePrice() {
+    const variacao = variacoes[select?.value];
+    const disponivel = !variacoes.length || variacao?.estoque > 0;
+    button.disabled = !disponivel;
+    button.textContent = disponivel ? 'Comprar' : 'Esgotado';
+    const atual = variacao?.preco ?? produto.preco;
+    const original = variacao?.precoOriginal ?? produto.precoOriginal;
+    price.innerHTML = disponivel
+      ? (original > atual ? '<del class="original-price">' + formatPrice(original) + '</del> ' : '') + formatPrice(atual)
+      : 'Indisponível';
+  }
+  select?.addEventListener('change', updatePrice);
+  button.addEventListener('click', () => addToCart(produto, variacoes[select?.value]));
+  card.querySelectorAll('[data-foto]').forEach(buttonFoto => {
+    buttonFoto.addEventListener('click', () => {
+      card.querySelector('.product-media img').src = fotos[buttonFoto.dataset.foto];
+    });
   });
+  updatePrice();
+  return card;
 }
 
 async function loadProducts() {
-  if (!productGrid) return;
   productGrid.innerHTML = '<p class="empty-products">Carregando produtos...</p>';
-
   try {
-    const staticProducts = Array.isArray(categoryConfig.products) ? categoryConfig.products : [];
-
-    if (!categoryConfig.tipoAnimal && categoryConfig.mode !== 'all') {
-      renderProducts(staticProducts);
-      return;
-    }
-
     const endpoint = categoryConfig.mode === 'all'
-      ? `${API_BASE_URL}/produtos`
-      : `${API_BASE_URL}/api/produtos/categoria/${categoryConfig.tipoAnimal}`;
-
-    const response = await fetch(endpoint);
+      ? '/produtos'
+      : '/api/produtos/categoria/' + categoryConfig.tipoAnimal;
+    const response = await fetch(window.PETEXPRESS_API_URL + endpoint, { cache: 'no-store' });
     if (!response.ok) throw new Error('Erro ao buscar produtos');
     const produtos = await response.json();
-    renderProducts([...produtos, ...staticProducts]);
-  } catch (error) {
-    console.error('Erro ao carregar produtos:', error);
-    if (Array.isArray(categoryConfig.products) && categoryConfig.products.length) {
-      renderProducts(categoryConfig.products);
+    productCount.textContent = String(produtos.length);
+    if (!produtos.length) {
+      productGrid.innerHTML = '<p class="empty-products">Nenhum produto encontrado.</p>';
       return;
     }
-
+    productGrid.replaceChildren(...produtos.map(renderProduct));
+    document.getElementById(location.hash.slice(1))?.scrollIntoView({ block: 'center' });
+  } catch (error) {
+    console.error(error);
     productGrid.innerHTML = '<p class="empty-products">Não foi possível carregar os produtos.</p>';
   }
 }

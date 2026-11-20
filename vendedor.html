@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Produtos | Painel do vendedor | PetExpress</title>
+  <link rel="stylesheet" href="style-login.css">
+  <link rel="stylesheet" href="style-vendedor.css">
+  <script defer src="config.js"></script>
+  <script defer src="vendedor-layout.js"></script>
+<script defer src="vendedor-comum.js"></script>
+  <script defer src="vendedor-js.js"></script>
+</head>
+<body class="seller-page">
+  <header class="seller-header">
+    <div class="seller-width seller-header-content">
+      <a href="index.html" class="seller-brand">
+        <img src="img/lg.png" alt="PetExpress">
+        <span>Painel do vendedor</span>
+      </a>
+      <nav aria-label="Painel do vendedor" id="seller-nav" hidden>
+        <a href="vendedor-resumo.html">Visão geral</a>
+        <a href="vendedor.html" aria-current="page">Produtos</a>
+        <a href="vendedor-estoque.html">Estoque</a>
+        <a href="vendedor-pedidos.html">Pedidos</a>
+        <a href="vendedor-promocoes.html">Promoções</a>
+        <button class="seller-secondary" type="button" id="seller-logout">Sair</button>
+      </nav>
+    </div>
+  </header>
+  <main class="seller-width">
+    <p id="seller-message" role="status">Verificando acesso…</p>
+    <div id="seller-access" hidden>
+      <a class="seller-secondary" href="login.html?redirect=vendedor">Entrar com outra conta</a>
+    </div>
+    <section id="seller-catalog" hidden>
+      <div class="seller-heading">
+        <div>
+          <h1>Produtos</h1>
+          <p>Cadastre e edite os anúncios da sua loja.</p>
+        </div>
+        <button type="button" class="btn-submit" id="seller-new">Novo produto</button>
+      </div>
+
+      <section class="auth-card seller-list" aria-label="Lista de produtos">
+        <div class="seller-filters">
+          <label class="input-group" for="seller-search">Buscar produto
+            <input id="seller-search" type="search" placeholder="Nome do produto">
+          </label>
+          <label class="input-group" for="seller-filter">Situação
+            <select id="seller-filter">
+              <option value="">Todas</option>
+              <option value="PUBLICADO">Publicado</option>
+              <option value="RASCUNHO">Rascunho</option>
+              <option value="PAUSADO">Pausado</option>
+            </select>
+          </label>
+        </div>
+        <div class="seller-table">
+          <table>
+            <thead><tr><th scope="col">Produto</th><th scope="col">Preço inicial</th><th scope="col">Situação</th><th scope="col">Ações</th></tr></thead>
+            <tbody id="seller-rows"></tbody>
+          </table>
+        </div>
+        <p class="seller-empty" id="seller-empty" hidden>Nenhum produto encontrado.</p>
+      </section>
+    </section>
+
+
+    <section id="seller-dialog" hidden>
+      <div class="seller-product-title">
+        <button type="button" id="seller-close" class="seller-back" aria-label="Voltar aos produtos">←</button>
+        <h1 id="seller-form-title">Cadastro de Produtos</h1>
+      </div>
+      <div class="auth-card seller-product-card">
+      <form id="seller-form" class="seller-product-form" novalidate>
+        <div class="seller-photo-column">
+          <div class="seller-photo-preview"><img id="seller-photo" alt="Foto do produto" hidden><span id="seller-photo-empty" class="seller-photo-empty">Foto do produto</span></div>
+          <button type="button" class="seller-secondary" id="seller-change-photo">Alterar imagem</button>
+          <div class="seller-photo-editor" id="seller-photo-editor" hidden>
+            <label class="input-group">Fotos<textarea name="fotos" rows="3" placeholder="URL da imagem ou img/foto.jpg" aria-describedby="seller-photos-help"></textarea></label>
+            <p class="seller-help" id="seller-photos-help">Uma imagem por linha. A primeira será a capa.</p>
+          </div>
+        </div>
+        <div class="seller-product-main">
+          <label class="input-group">Nome do produto *<input name="nome" maxlength="255" required></label>
+          <label class="input-group">Marca<input name="tipoProduto" maxlength="255"></label>
+          <label class="input-group">Preço (R$) *<input name="precoPrincipal" type="number" min="0.01" max="999999.99" step="0.01" inputmode="decimal"></label>
+          <label class="input-group">Descrição<textarea name="descricao" maxlength="255" rows="3" placeholder="Descreva o produto"></textarea></label>
+        </div>
+        <div class="seller-product-side">
+          <label class="input-group">Peso/Quantidade *<select id="seller-primary-size"><option value="">Selecione um tamanho</option></select></label>
+          <label class="seller-toggle-label">Produto ativo<input class="seller-toggle" name="produtoAtivo" type="checkbox" role="switch" checked></label>
+        </div>
+        <details class="seller-product-extra" id="seller-product-extra">
+          <summary>Categoria, estoque e outros tamanhos</summary>
+          <div class="seller-fields">
+            <label class="input-group">Tipo de pet<select name="tipoAnimal"><option value="">Selecione</option><option value="CACHORRO">Cães</option><option value="GATO">Gatos</option><option value="PASSARO">Pássaros</option><option value="PEIXE">Peixes</option><option value="OUTRO">Outros pets</option></select></label>
+            <label class="input-group">Categoria<input name="categoria" maxlength="100" placeholder="Ex.: Rações"></label>
+          </div>
+          <label class="input-group" id="seller-legacy-price" hidden>Preço unitário<input name="precoAvulso" type="number" min="0.01" max="999999.99" step="0.01"></label>
+          <p class="seller-stock-help">Para ajustar o saldo de uma embalagem já cadastrada, use a aba Estoque.</p>
+          <div id="seller-variants"></div>
+          <button type="button" class="seller-secondary" id="seller-add-variant">Adicionar tamanho</button>
+        </details>
+        <p id="seller-form-error" role="alert" hidden></p>
+        <div class="seller-actions seller-product-actions">
+          <button type="submit" class="seller-secondary" value="RASCUNHO" id="seller-draft">Salvar rascunho</button>
+          <button type="button" class="seller-secondary" id="seller-cancel">Cancelar</button>
+          <button type="submit" class="btn-submit" id="seller-publish">Salvar produto</button>
+        </div>
+      </form>
+      </div>
+    </section>
+  </main>
+  <template id="seller-variant-template">
+    <div class="seller-variant">
+      <label class="input-group">Peso/Quantidade<input name="embalagem" placeholder="Ex.: 3 kg" maxlength="100" required></label>
+      <label class="input-group">Preço (R$)<input name="preco" type="number" inputmode="decimal" min="0.01" max="999999.99" step="0.01" required></label>
+      <label class="input-group">Estoque<input name="estoque" type="number" inputmode="numeric" min="0" max="2147483647" step="1" required></label>
+      <button type="button" class="seller-secondary" data-remove>Remover</button>
+    </div>
+  </template>
+</body>
+</html>

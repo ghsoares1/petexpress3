@@ -368,3 +368,5 @@ header a {
     box-shadow: 0 4px 24px 0 #ff9800;
 }
 
+
+.original-price { display: block; color: #666; font-size: .85rem; font-weight: 400; }

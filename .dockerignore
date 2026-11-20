@@ -1,0 +1,11 @@
+.git
+**/target
+**/*.db
+**/*.db-*
+**/*.log
+**/logs
+.env
+.env.*
+screenshots
+**/*.zip
+

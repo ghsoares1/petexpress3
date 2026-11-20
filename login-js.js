@@ -1,4 +1,4 @@
-﻿const API_BASE_URL = window.PETEXPRESS_API_URL || 'http://localhost:8082';
+const API_BASE_URL = window.PETEXPRESS_API_URL || 'http://localhost:8082';
 
 function validateForm() {
   var email = document.getElementById("email").value;
@@ -24,7 +24,27 @@ document.addEventListener('DOMContentLoaded', function () {
   var welcomeMessage = document.getElementById('welcomeMessage');
   var submitButton = loginForm?.querySelector('button[type="submit"]');
 
+  const destino = new URLSearchParams(window.location.search).get('redirect');
+  const paginasVendedor = new Map([
+    ['resumo', 'vendedor-resumo.html'],
+    ['promocoes', 'vendedor-promocoes.html'],
+    ['vendedor', 'vendedor.html'],
+    ['estoque', 'vendedor-estoque.html'],
+    ['pedidos-vendedor', 'vendedor-pedidos.html'],
+    ['vendas', 'vendedor-vendas.html'],
+    ['relatorios', 'vendedor-relatorios.html'],
+    ['configuracoes', 'vendedor-configuracoes.html']
+  ]);
+  const sellerLogin = paginasVendedor.has(destino);
+  if (sellerLogin) {
+    document.title = 'Área do vendedor | PetExpress';
+    document.querySelector('.brand-copy h1').textContent = 'Área do vendedor';
+    document.querySelector('.brand-copy p').textContent = 'Entre com sua conta da equipe PetExpress.';
+    document.querySelectorAll('.switch-form').forEach(link => link.hidden = true);
+  }
+
   function getRedirectTarget() {
+    if (sellerLogin) return paginasVendedor.get(destino);
     var params = new URLSearchParams(window.location.search);
     if (params.get('redirect') === 'checkout') {
       return 'checkout.html';

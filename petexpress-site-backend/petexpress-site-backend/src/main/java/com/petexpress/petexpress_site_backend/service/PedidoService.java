@@ -62,34 +62,6 @@ public class PedidoService {
         return PedidoResponse.from(pedidoRepository.save(pedido));
     }
 
-    public PedidoResponse aprovar(Long id, Long authenticatedUserId) {
-        Pedido pedido = buscarPedido(id);
-        validarDonoPedido(pedido, authenticatedUserId);
-        pedido.setStatus(PedidoStatus.PAGAMENTO_APROVADO);
-        pedido.setDataAtualizacao(LocalDateTime.now());
-        return PedidoResponse.from(pedidoRepository.save(pedido));
-    }
-
-    public void vincularPreferencia(Long id, String preferenceId) {
-        Pedido pedido = buscarPedido(id);
-        pedido.setPreferenceId(preferenceId);
-        pedidoRepository.save(pedido);
-    }
-
-    public void atualizarStatusPagamento(String preferenceId, PedidoStatus novoStatus, String paymentId) {
-        Pedido pedido = pedidoRepository.findAll().stream()
-                .filter(p -> preferenceId.equals(p.getPreferenceId()))
-                .findFirst()
-                .orElse(null);
-        
-        if (pedido != null) {
-            pedido.setStatus(novoStatus);
-            pedido.setPaymentId(paymentId);
-            pedido.setDataAtualizacao(LocalDateTime.now());
-            pedidoRepository.save(pedido);
-        }
-    }
-
     public PedidoResponse buscarPorId(Long id, Long authenticatedUserId) {
         Pedido pedido = buscarPedido(id);
         validarDonoPedido(pedido, authenticatedUserId);

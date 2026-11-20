@@ -32,6 +32,18 @@
                         <span>Entrega</span>
                         <strong class="delivery-fee-value">R$ 0,00</strong>
                     </div>
+                    <div class="coupon-area">
+                      <label for="coupon-code">Cupom de desconto</label>
+                      <div class="coupon-controls">
+                        <input id="coupon-code" maxlength="30" placeholder="Digite seu cupom">
+                        <button id="coupon-apply" type="button">Aplicar</button>
+                        <button id="coupon-remove" type="button" hidden>Remover</button>
+                      </div>
+                      <p id="coupon-message" role="status"></p>
+                    </div>
+                    <div class="summary-fee" id="coupon-discount-row" hidden>
+                      <span>Desconto do cupom</span><strong id="coupon-discount"></strong>
+                    </div>
                     <div class="summary-total">
                         <span>Total do pedido</span>
                         <strong class="summary-value">R$ 0,00</strong>
@@ -103,40 +115,27 @@
                             <span>Retirar na loja</span>
                         </label>
                         <label class="radio-option compact">
-                            <input type="radio" name="delivery" value="Entrega via Uber" />
-                            <span>Entrega via Uber</span>
+                            <input type="radio" name="delivery" value="Entrega via Uber" disabled />
+                            <span>Entrega Uber Direct</span>
                         </label>
 
                         <div id="uberInfo" class="uber-info hidden" aria-hidden="true">
-                            <div class="uber-card-header">
-                                <div>
-                                    <span class="uber-eyebrow">Cotação estimada</span>
-                                    <strong>Entrega parceiro Uber</strong>
-                                </div>
-                                <span class="uber-status-pill" id="uberStatusPill">Disponível</span>
+                            <div class="uber-card-header"><strong>Entrega Uber Direct</strong><span class="uber-status-pill" id="uberStatusPill">Consulte o frete</span></div>
+                            <p class="uber-helper">Confirme o endereço completo para consultar a disponibilidade e o preço da entrega.</p>
+                            <div class="form-group"><label for="uberNome">Destinatário</label><input id="uberNome" name="uberNome" maxlength="100"></div>
+                            <div class="form-group"><label for="uberEndereco">Rua, número e complemento</label><input id="uberEndereco" name="uberEndereco" maxlength="255"></div>
+                            <div class="form-row"><div class="form-group"><label for="uberCidade">Cidade</label><input id="uberCidade" name="uberCidade" maxlength="100"></div><div class="form-group"><label for="uberUF">UF</label><input id="uberUF" name="uberUF" maxlength="2" placeholder="SP"></div></div>
+                            <div class="form-row"><div class="form-group"><label for="uberCep">CEP</label><input id="uberCep" name="uberCep" maxlength="9"></div><div class="form-group"><label for="uberTelefone">Telefone para entrega</label><input id="uberTelefone" name="uberTelefone" type="tel" placeholder="+55 11 99999-9999"></div></div>
+                            <button type="button" class="link-button" id="uberQuoteButton">Consultar frete</button>
+                            <p id="uberQuoteMessage" role="status"></p>
+                            <div class="uber-quote-grid hidden" id="uberQuoteResult">
+                                <div><span>Frete</span><strong id="uberFee"></strong></div>
+                                <div><span>Prazo estimado</span><strong id="uberEta"></strong></div>
+                                <div><span>Válido até</span><strong id="uberExpires"></strong></div>
                             </div>
-
-                            <div class="uber-quote-grid">
-                                <div>
-                                    <span>Valor médio</span>
-                                    <strong id="uberFee">R$ 0,00</strong>
-                                </div>
-                                <div>
-                                    <span>Tempo estimado</span>
-                                    <strong id="uberEta">-- min</strong>
-                                </div>
-                                <div>
-                                    <span>Distância</span>
-                                    <strong id="uberDistance">-- km</strong>
-                                </div>
-                                <div>
-                                    <span>Código</span>
-                                    <strong id="uberCode">UBER-00000</strong>
-                                </div>
-                            </div>
-
-                            <p class="uber-helper">A entrega será solicitada após a confirmação do pagamento. O acompanhamento completo aparecerá em Meus Pedidos.</p>
+                            <p class="uber-helper">Após o pagamento, a loja confirma a solicitação do entregador e o acompanhamento fica disponível em Meus pedidos.</p>
                         </div>
+                        <p id="uberAvailability" class="helper-text">Verificando disponibilidade da entrega…</p>
                     </div>
 
                     <div class="form-actions">

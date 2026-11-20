@@ -1,5 +1,6 @@
 package com.petexpress.petexpress_site_backend.config;
 
+import java.time.Duration;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
@@ -25,6 +26,6 @@ public class MercadoPagoConfig {
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder builder) {
-        return builder.build();
+        return builder.connectTimeout(Duration.ofSeconds(5)).readTimeout(Duration.ofSeconds(12)).build();
     }
 }

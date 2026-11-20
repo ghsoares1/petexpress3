@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Visão geral | Painel do vendedor | PetExpress</title>
+<link rel="stylesheet" href="style-login.css"><link rel="stylesheet" href="style-vendedor.css">
+<script defer src="config.js"></script><script defer src="vendedor-layout.js"></script>
+<script defer src="vendedor-comum.js"></script><script defer src="vendedor-resumo.js"></script>
+</head>
+<body class="seller-page">
+<header class="seller-header"><div class="seller-width seller-header-content">
+<a href="index.html" class="seller-brand"><img src="img/lg.png" alt="PetExpress"><span>Painel do vendedor</span></a>
+<nav aria-label="Painel do vendedor" id="seller-nav" hidden>
+<a href="vendedor-resumo.html" aria-current="page">Visão geral</a>
+<a href="vendedor.html" >Produtos</a>
+<a href="vendedor-estoque.html" >Estoque</a>
+<a href="vendedor-pedidos.html" >Pedidos</a>
+<a href="vendedor-promocoes.html" >Promoções</a>
+<button class="seller-secondary" id="seller-logout" type="button">Sair</button>
+</nav></div></header>
+<main class="seller-width">
+<p id="seller-message" role="status">Verificando acesso…</p>
+<div id="seller-access" hidden><a class="seller-secondary" href="login.html?redirect=resumo">Entrar com outra conta</a></div>
+<section id="seller-catalog" hidden><div class="seller-heading"><div><h1>Início</h1><p>Acompanhe vendas aprovadas e o que precisa de atenção.</p></div></div>
+<form id="seller-report-form" class="seller-report-period">
+<label class="input-group">De<input name="inicio" type="date" required></label>
+<label class="input-group">Até<input name="fim" type="date" required></label>
+<button class="seller-secondary" type="submit">Atualizar resumo</button>
+</form>
+<p class="seller-stock-help">As vendas usam a data de aprovação do pagamento. Pedidos anteriores a esta versão usam a data da compra. Os alertas mostram a situação atual da loja.</p>
+<div id="seller-metrics" class="seller-metrics"></div>
+<section class="auth-card seller-list seller-section-heading"><h2>Para acompanhar agora</h2><div id="seller-attention"></div></section>
+<div class="seller-report-columns seller-section-heading">
+<section class="auth-card seller-list"><h2>Produtos mais vendidos</h2><ol id="seller-top-products" class="seller-ranking"></ol></section>
+<section class="auth-card seller-list"><h2>Tamanhos mais vendidos</h2><ol id="seller-top-sizes" class="seller-ranking"></ol></section>
+</div>
+<section class="auth-card seller-list seller-section-heading"><h2>Vendas por dia</h2><div id="seller-sales-days" class="seller-table"></div></section></section>
+</main></body></html>

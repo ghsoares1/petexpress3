@@ -1,48 +1,31 @@
 package com.petexpress.petexpress_site_backend.controller;
 
-import com.petexpress.petexpress_site_backend.model.Produto;
 import com.petexpress.petexpress_site_backend.service.ProdutoService;
+import com.petexpress.petexpress_site_backend.service.PromocoesService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping({"/api/produtos", "/produtos"})
-@CrossOrigin(origins = "*")
 public class ProdutoController {
-
-    private final ProdutoService produtoService;
-
-    public ProdutoController(ProdutoService produtoService) {
-        this.produtoService = produtoService;
+    private final ProdutoService produtos;
+    private final PromocoesService promocoes;
+    public ProdutoController(ProdutoService produtos, PromocoesService promocoes) {
+        this.produtos = produtos;
+        this.promocoes = promocoes;
     }
-
-    @PostMapping
-    public ResponseEntity<Produto> cadastrar(@RequestBody Produto produto) {
-        return ResponseEntity.ok(produtoService.cadastrar(produto));
-    }
-
     @GetMapping
-    public ResponseEntity<List<Produto>> listarTodos() {
-        return ResponseEntity.ok(produtoService.listarTodos());
+    public List<Map<String, Object>> listarTodos() {
+        return produtos.listarTodos().stream().map(promocoes::catalogo).toList();
     }
-
     @GetMapping("/categoria/{tipoAnimal}")
-    public ResponseEntity<List<Produto>> listarPorCategoria(@PathVariable String tipoAnimal) {
-        return ResponseEntity.ok(produtoService.buscarPorTipoAnimal(tipoAnimal));
+    public List<Map<String, Object>> listarPorCategoria(@PathVariable String tipoAnimal) {
+        return produtos.buscarPorTipoAnimal(tipoAnimal).stream().map(promocoes::catalogo).toList();
     }
-
     @GetMapping("/{id}")
-    public ResponseEntity<Produto> buscarPorId(@PathVariable Long id) {
-        return produtoService.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
-        produtoService.deletar(id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<Map<String, Object>> buscarPorId(@PathVariable Long id) {
+        return ResponseEntity.of(produtos.buscarPorId(id).map(promocoes::catalogo));
     }
 }

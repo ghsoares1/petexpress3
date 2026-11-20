@@ -41,3 +41,14 @@ build/
 logs/
 petexpress-site-backend/petexpress-site-backend/logs/
 petexpress-site-backend/petexpress-site-backend/server.log
+
+# Bancos SQLite locais
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+
+# Capturas locais de validação
+screenshots/
+
+!.env.example

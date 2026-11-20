@@ -1,4 +1,5 @@
-﻿const CART_KEY = 'carrinho';
+const { escapar, link } = window.PETEXPRESS_CATALOGO;
+const CART_KEY = 'carrinho';
 const cartItemsElement = document.querySelector('.cart-items');
 const totalValueElement = document.querySelector('.total-value');
 const emptyStateElement = document.querySelector('.empty-cart');
@@ -66,15 +67,15 @@ function renderCartItems() {
     card.className = 'cart-item';
     card.innerHTML = `
       <div class="cart-item-image">
-        <img src="${imageUrl}" alt="${item.nome}" onerror="this.src='img/c1.png'">
+        <img src="${escapar(imageUrl)}" alt="${escapar(item.nome)}" onerror="this.src='img/c1.png'">
       </div>
       <div class="item-details">
-        <span class="item-name">${item.nome}</span>
+        <span class="item-name">${escapar(item.nome)}</span>
         <span class="item-price">${formatPrice(item.preco)}</span>
         <div class="item-controls">
-          <button class="qty-btn" data-action="decrease" data-id="${item.id}">-</button>
-          <span class="item-quantity">${item.quantidade}</span>
-          <button class="qty-btn" data-action="increase" data-id="${item.id}">+</button>
+          <button class="qty-btn" data-action="decrease" data-id="${escapar(item.id)}">-</button>
+          <span class="item-quantity">${escapar(item.quantidade)}</span>
+          <button class="qty-btn" data-action="increase" data-id="${escapar(item.id)}">+</button>
         </div>
       </div>
     `;
@@ -124,12 +125,12 @@ function renderRecommendations() {
     const card = document.createElement('div');
     card.className = 'recommendation-card';
     card.innerHTML = `
-      <img src="${product.imagem || 'img/c1.png'}" alt="${product.nome}">
+      <img src="${escapar(product.imagem || 'img/c1.png')}" alt="${escapar(product.nome)}">
       <div class="recommendation-copy">
-        <span class="recommendation-name">${product.nome}</span>
-        <span class="recommendation-price">${formatPrice(product.preco)}</span>
+        <span class="recommendation-name">${escapar(product.nome)}</span>
+        <span class="recommendation-price">${product.precoOriginal > product.preco ? `<del class="original-price">${formatPrice(product.precoOriginal)}</del> ` : ''}${formatPrice(product.preco)}</span>
       </div>
-      <button class="add-btn" data-id="${productId}">Adicionar</button>
+      <button class="add-btn" data-id="${productId}">${product.variacoes?.length ? 'Ver embalagens' : 'Adicionar'}</button>
     `;
 
     recommendationsElement.appendChild(card);
@@ -147,6 +148,10 @@ function renderRecommendations() {
 }
 
 function addToCart(product) {
+  if (product.variacoes?.length) {
+    window.location.href = link(product.id);
+    return;
+  }
   const id = getProductId(product);
   const existing = cart.find((item) => String(item.id) === String(id));
 
@@ -155,6 +160,7 @@ function addToCart(product) {
   } else {
     cart.push({
       id,
+      catalogoId: product.id,
       nome: product.nome,
       preco: Number(product.preco || product.valor || 0),
       imagem: product.imagem || product.image || product.img || product.urlImagem || product.foto || 'img/c1.png',

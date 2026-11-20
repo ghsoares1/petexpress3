@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Estoque | Painel do vendedor | PetExpress</title>
+  <link rel="stylesheet" href="style-login.css">
+  <link rel="stylesheet" href="style-vendedor.css">
+  <script defer src="config.js"></script>
+  <script defer src="vendedor-layout.js"></script>
+<script defer src="vendedor-comum.js"></script>
+  <script defer src="vendedor-estoque.js"></script>
+</head>
+<body class="seller-page">
+  <header class="seller-header">
+    <div class="seller-width seller-header-content">
+      <a href="index.html" class="seller-brand">
+        <img src="img/lg.png" alt="PetExpress">
+        <span>Painel do vendedor</span>
+      </a>
+      <nav aria-label="Painel do vendedor" id="seller-nav" hidden>
+        <a href="vendedor-resumo.html">Visão geral</a>
+        <a href="vendedor.html">Produtos</a>
+        <a href="vendedor-estoque.html" aria-current="page">Estoque</a>
+        <a href="vendedor-pedidos.html">Pedidos</a>
+        <a href="vendedor-promocoes.html">Promoções</a>
+        <button class="seller-secondary" type="button" id="seller-logout">Sair</button>
+      </nav>
+    </div>
+  </header>
+  <main class="seller-width">
+    <p id="seller-message" role="status">Verificando acesso…</p>
+    <div id="seller-access" hidden>
+      <a class="seller-secondary" href="login.html?redirect=estoque">Entrar com outra conta</a>
+    </div>
+    <section id="seller-catalog" hidden>
+      <div class="seller-heading">
+        <div>
+          <h1>Estoque</h1>
+          <p>Acompanhe os saldos e registre movimentações por embalagem.</p>
+        </div>
+        <button type="button" class="seller-secondary" id="seller-history-all">Histórico geral</button>
+      </div>
+      <section class="auth-card seller-list" aria-label="Saldos por embalagem">
+        <div class="seller-filters">
+          <label class="input-group">Buscar por produto ou tamanho
+            <input id="seller-stock-search" type="search" placeholder="Ex.: Ração 3 kg">
+          </label>
+          <label class="input-group">Situação do estoque
+            <select id="seller-stock-filter">
+              <option value="">Todas</option>
+              <option value="BAIXO">Estoque baixo</option>
+              <option value="ESGOTADO">Esgotado</option>
+              <option value="DISPONIVEL">Disponível</option>
+            </select>
+          </label>
+        </div>
+        <div class="seller-table">
+          <table>
+            <thead><tr><th scope="col">Produto</th><th scope="col">Tamanho do pacote</th><th scope="col">Disponíveis</th><th scope="col">Reservadas</th><th scope="col">Estoque mínimo</th><th scope="col">Situação</th><th scope="col">Ações</th></tr></thead>
+            <tbody id="seller-stock-rows"></tbody>
+          </table>
+        </div>
+        <p class="seller-empty" id="seller-stock-empty" hidden></p>
+      </section>
+    </section>
+
+    <dialog id="seller-stock-dialog" class="auth-card seller-dialog" aria-labelledby="seller-stock-title">
+      <form id="seller-stock-form">
+        <div class="seller-heading">
+          <div>
+            <h2 id="seller-stock-title"></h2>
+            <p id="seller-stock-product"></p>
+            <p id="seller-stock-balance"></p>
+          </div>
+          <button type="button" class="seller-secondary" id="seller-stock-close">Fechar</button>
+        </div>
+        <div id="seller-stock-movement" class="seller-stock-fields">
+          <label class="input-group">Tipo
+            <select name="tipo">
+              <option value="ENTRADA">Entrada</option>
+              <option value="SAIDA">Saída</option>
+              <option value="AJUSTE">Ajuste de contagem</option>
+            </select>
+          </label>
+          <label class="input-group"><span id="seller-stock-quantity-label">Quantidade de unidades</span>
+            <input name="quantidade" type="number" inputmode="numeric" step="1" min="1" max="2147483647" required>
+          </label>
+          <label class="input-group">Motivo
+            <textarea name="motivo" maxlength="255" rows="2" required placeholder="Ex.: Reposição do fornecedor"></textarea>
+          </label>
+          <p role="status" id="seller-stock-preview"></p>
+        </div>
+        <label class="input-group" id="seller-stock-minimum" hidden>Estoque mínimo
+          <input name="minimo" type="number" inputmode="numeric" step="1" min="0" max="2147483647" required>
+          <span class="seller-stock-help">O alerta aparece quando o saldo chega ao mínimo. Informe 0 para desativar o alerta de estoque baixo.</span>
+        </label>
+        <p class="seller-stock-error" id="seller-stock-error" role="alert" hidden></p>
+        <div class="seller-actions"><button type="submit" class="btn-submit">Salvar</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="seller-history-dialog" class="auth-card seller-dialog seller-history-dialog" aria-labelledby="seller-history-title">
+      <div class="seller-heading">
+        <div><h2 id="seller-history-title">Histórico de movimentações</h2><p id="seller-history-product"></p></div>
+        <button type="button" class="seller-secondary" id="seller-history-close">Fechar</button>
+      </div>
+      <p id="seller-history-message" role="status"></p>
+      <ol id="seller-history-rows" class="seller-history-rows"></ol>
+      <button id="seller-history-more" class="seller-secondary" type="button" hidden>Carregar mais</button>
+    </dialog>
+  </main>
+</body>
+</html>

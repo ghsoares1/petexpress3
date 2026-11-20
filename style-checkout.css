@@ -741,3 +741,11 @@ main.checkout-page {
         grid-template-columns: 1fr;
     }
 }
+
+[hidden] { display: none !important; }
+.coupon-area { margin-block: 18px; }
+.coupon-area label { display: block; margin-bottom: 7px; font-weight: 600; }
+.coupon-controls { display: flex; flex-wrap: wrap; gap: 8px; }
+.coupon-controls input { flex: 1; min-width: 120px; width: 100px; padding: 10px; border: 1px solid #e8ceb2; border-radius: 12px; font: inherit; }
+.coupon-controls button { padding: 10px; border: 1px solid #e8ceb2; border-radius: 12px; background: #fff0df; color: #723600; font: inherit; cursor: pointer; }
+#coupon-message { margin-top: 8px; color: #555; }

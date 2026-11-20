@@ -16,8 +16,11 @@ public class ItemPedido {
     private Long id;
 
     private String produtoId;
+    private String variacaoCodigo;
+    private String categoria;
     private String nome;
     private Double precoUnitario;
+    private Double precoOriginal;
     private Integer quantidade;
     private String imagem;
 
@@ -25,8 +28,17 @@ public class ItemPedido {
     @JoinColumn(name = "pedido_id")
     private Pedido pedido;
 
+    public Double getPrecoOriginal() { return precoOriginal; }
+    public void setPrecoOriginal(Double precoOriginal) { this.precoOriginal = precoOriginal; }
+
+    public String getCategoria() { return categoria; }
+    public void setCategoria(String categoria) { this.categoria = categoria; }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
+    public String getVariacaoCodigo() { return variacaoCodigo; }
+    public void setVariacaoCodigo(String variacaoCodigo) { this.variacaoCodigo = variacaoCodigo; }
 
     public String getProdutoId() { return produtoId; }
     public void setProdutoId(String produtoId) { this.produtoId = produtoId; }

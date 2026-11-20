@@ -2081,3 +2081,5 @@ main {
     height: 178px;
   }
 }
+
+.original-price { display: block; color: #666; font-size: .85rem; font-weight: 400; }

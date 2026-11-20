@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Configurações | PetExpress</title>
+  <link rel="stylesheet" href="style-login.css">
+  <link rel="stylesheet" href="style-vendedor.css">
+  <script defer src="config.js"></script>
+  <script defer src="vendedor-layout.js"></script>
+  <script defer src="vendedor-comum.js"></script>
+  <script defer src="vendedor-configuracoes.js"></script>
+</head>
+<body class="seller-page">
+  <header class="seller-header"></header>
+  <main class="seller-width">
+    <p id="seller-message" role="status">Verificando acesso…</p>
+    <div id="seller-access" hidden><a class="seller-secondary" href="login.html?redirect=configuracoes">Entrar com outra conta</a></div>
+    <section id="seller-catalog" hidden>
+      <div class="seller-heading">
+        <div><h1>Configurações</h1><p>Cuide dos dados da sua loja e da sua conta.</p></div>
+      </div>
+      <div class="seller-settings-layout">
+        <nav class="seller-settings-navigation" aria-label="Seções de configurações">
+          <a href="?aba=loja" id="seller-tab-loja" aria-current="page"><span class="seller-settings-nav-symbol" aria-hidden="true">⌂</span><span><strong>Minha loja</strong><small>Informações e contato</small></span><span aria-hidden="true">›</span></a>
+          <a href="?aba=conta" id="seller-tab-conta"><span class="seller-settings-nav-symbol" aria-hidden="true">◎</span><span><strong>Minha conta</strong><small>Perfil e dados cadastrais</small></span><span aria-hidden="true">›</span></a>
+          <a href="?aba=integracoes" id="seller-tab-integracoes"><span class="seller-settings-nav-symbol" aria-hidden="true">↗</span><span><strong>Integrações</strong><small>Pagamentos e entregas</small></span><span aria-hidden="true">›</span></a>
+          <a href="index.html" class="seller-visit-store">Visitar a loja <span aria-hidden="true">↗</span></a>
+        </nav>
+
+        <section id="seller-settings-loja" class="auth-card seller-settings-content" aria-labelledby="seller-store-title">
+          <div class="seller-settings-card-heading"><span class="seller-settings-icon" aria-hidden="true">⌂</span><div><h2 id="seller-store-title">Informações da loja</h2><p>Nome e canais de contato do seu negócio.</p></div></div>
+          <div class="seller-store-preview"><span class="seller-store-monogram" id="seller-store-monogram" aria-hidden="true">P</span><div><strong id="seller-store-preview-name">Sua loja</strong><span>PetExpress · Painel do vendedor</span></div></div>
+          <form id="seller-settings-form">
+            <label class="input-group">Nome da loja<input name="nome" maxlength="100" autocomplete="organization" required></label>
+            <label class="input-group">Telefone de contato<input name="telefone" type="tel" maxlength="30" autocomplete="tel" placeholder="(11) 99999-9999"></label>
+            <label class="input-group">Endereço da loja<textarea name="endereco" maxlength="255" rows="2" autocomplete="street-address" placeholder="Rua, número, bairro e cidade"></textarea></label>
+            <div class="seller-settings-footer"><p id="seller-store-feedback" role="status"></p><button class="btn-submit" type="submit">Salvar alterações</button></div>
+          </form>
+        </section>
+
+        <section id="seller-settings-conta" class="auth-card seller-settings-content" aria-labelledby="seller-profile-title" hidden>
+          <div class="seller-settings-card-heading"><span class="seller-settings-icon" aria-hidden="true">◎</span><div><h2 id="seller-profile-title">Meu perfil</h2><p>Gerencie as informações da conta conectada.</p></div></div>
+          <div class="seller-store-preview"><span class="seller-profile-monogram" id="seller-profile-monogram" aria-hidden="true">V</span><div><strong id="seller-profile-fullname"></strong><span id="seller-profile-email"></span></div><span class="seller-profile-role">Vendedor</span></div>
+          <form id="seller-profile-form">
+            <div class="seller-fields">
+              <label class="input-group">Nome<input name="nome" maxlength="255" autocomplete="given-name" required></label>
+              <label class="input-group">Sobrenome<input name="sobrenome" maxlength="255" autocomplete="family-name" required></label>
+            </div>
+            <label class="input-group">E-mail de acesso<input name="email" type="email" maxlength="255" autocomplete="email" required></label>
+            <details class="seller-registration-details">
+              <summary>Dados cadastrais</summary>
+              <label class="input-group">CPF<input name="cpf" maxlength="14" required></label>
+              <label class="input-group">Endereço<input name="endereco" maxlength="255" autocomplete="street-address" required></label>
+              <div class="seller-fields"><label class="input-group">Bairro<input name="bairro" maxlength="255" required></label><label class="input-group">CEP<input name="cep" maxlength="9" autocomplete="postal-code" required></label></div>
+              <label class="input-group">Complemento<input name="complemento" maxlength="255"></label>
+            </details>
+            <div class="seller-settings-footer"><p id="seller-profile-feedback" role="status"></p><button class="btn-submit" type="submit">Salvar perfil</button></div>
+          </form>
+          <div class="seller-account-session"><div><strong>Sessão da conta</strong><p>Conectado ao painel com esta conta.</p></div><button id="seller-profile-logout" class="seller-secondary" type="button">Sair da conta</button></div>
+        </section>
+        <section id="seller-settings-integracoes" class="auth-card seller-settings-content" aria-labelledby="seller-integrations-title" hidden>
+          <div class="seller-settings-card-heading"><span class="seller-settings-icon" aria-hidden="true">↗</span><div><h2 id="seller-integrations-title">Pagamentos e entregas</h2><p>Confira a conexão com os serviços usados no checkout.</p></div></div>
+          <article class="seller-integration-card"><div><h3>Mercado Pago</h3><p id="seller-payment-integration">Verificando configuração…</p></div><button id="seller-payment-test" class="seller-secondary" type="button">Verificar conexão</button></article>
+          <p id="seller-payment-diagnostic" role="status" class="seller-stock-help"></p>
+          <article class="seller-integration-card"><div><h3>Uber Direct</h3><p id="seller-delivery-integration">Verificando configuração…</p></div><a href="https://direct.uber.com" target="_blank" rel="noopener noreferrer" class="seller-secondary">Acessar Uber Direct</a></article>
+          <p class="seller-stock-help">A conta Uber Direct precisa ter acesso à API e estar aprovada para entregas de produção. O frete é consultado pelo endereço e o entregador é solicitado pela loja em um pedido pago.</p>
+        </section>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
